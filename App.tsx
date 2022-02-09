@@ -1,10 +1,24 @@
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
+  const [productsList, SetProductsList] = useState([]);
+
+  const GetProducts = async () => {
+    const data = await fetch("https://fakestoreapi.com/products");
+    return await data.json();
+  }
+
+  useEffect(() => {
+    GetProducts().then(products => {
+      SetProductsList(products);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Text>List of products</Text>
       <StatusBar style="auto" />
     </View>
   );
