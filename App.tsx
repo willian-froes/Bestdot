@@ -2,16 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ProductService }  from './assets/service/ProductService';
+
 export default function App() {
   const [productsList, SetProductsList] = useState([]);
 
-  const GetProducts = async () => {
-    const data = await fetch("https://fakestoreapi.com/products");
-    return await data.json();
-  }
-
   useEffect(() => {
-    GetProducts().then(products => {
+    ProductService.GetProducts().then(products => {
       SetProductsList(products);
     });
   }, []);
