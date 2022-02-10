@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, VirtualizedList, Dimensions } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, VirtualizedList, Dimensions, ActivityIndicator } from 'react-native';
 
 import ProductCard from './assets/component/ProductCard';
 import InputWithButton from './assets/component/InputWithButton';
@@ -50,67 +50,74 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
-        <Navbar cartLength={cart.length}>
-          <InputWithButton callableMethod={() => {
-              let filteredProducts = searchableList.filter((product) => {
-                return product.title.toLowerCase().includes(searchText.toLowerCase());
-              });
 
-              SetProductsList(filteredProducts);
-            }}
-            callableCancelMethod={()=> {
-              SetProductsList(productsList);
-              SetSearchText("");
-            }}
-            inputPlaceholder={"Find the best for you!"}
-            buttonIcon={require("./assets/image/search-icon.png")}
-            callableSetter={SetSearchText}
-            value={searchText}
-          />
-        </Navbar>
+      <Navbar cartLength={cart.length}>
+        <InputWithButton callableMethod={() => {
+            let filteredProducts = searchableList.filter((product) => {
+              return product.title.toLowerCase().includes(searchText.toLowerCase());
+            });
 
-        {productsList.length == 0 
-          ?
-          <Text>Carregando produtos</Text>
-          :
-          <FlatList<Product>
-            ListHeaderComponent={
-              <>
-                <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
-                  <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("./assets/image/banner-sales-image.png")} />
-                </View>
+            SetProductsList(filteredProducts);
+          }}
+          callableCancelMethod={()=> {
+            SetProductsList(productsList);
+            SetSearchText("");
+          }}
+          inputPlaceholder={"Find the best for you!"}
+          buttonIcon={require("./assets/image/search-icon.png")}
+          callableSetter={SetSearchText}
+          value={searchText}
+        />
+      </Navbar>
 
-                <View style={{ marginHorizontal: 5 }}>
-                  <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
-                  <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
-                </View>
+      {productsList.length == 0 || categoriesList.length == 0
+        ?
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 
-                <FlatList<string>
-                  style={{ height: 40, marginBottom: 20, marginTop: 15 }}
-                  data={categoriesList}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({ item }) => {
-                    return(
-                      <CategoryButton categoryName={item} selected={false} />
-                    );
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                  numColumns={1}
-                />
-              </>
-            }
-            style={{ paddingHorizontal: 5}}
-            data={productsList}
-            renderItem={({ item }) => {
-              return(
-                <ProductCard product={item} />
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={2}
-          />
-        }
+          <View>
+            <ActivityIndicator size="large" color="#FF6E63" />
+            <Text style={{ color: '#B5B5B5', fontWeight: 'bold', marginTop: 20 }}>Wait, we get the bests for you!</Text>
+          </View>
+        </View>
+        :
+        <FlatList<Product>
+          ListHeaderComponent={
+            <>
+              <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
+                <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("./assets/image/banner-sales-image.png")} />
+              </View>
+
+              <View style={{ marginHorizontal: 5 }}>
+                <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
+                <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
+              </View>
+
+              <FlatList<string>
+                style={{ height: 40, marginBottom: 20, marginTop: 15 }}
+                data={categoriesList}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => {
+                  return(
+                    <CategoryButton categoryName={item} selected={false} />
+                  );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={1}
+              />
+            </>
+          }
+          style={{ paddingHorizontal: 5}}
+          data={productsList}
+          renderItem={({ item }) => {
+            return(
+              <ProductCard product={item} />
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={2}
+        />
+      }
     </View>
   );
 }
