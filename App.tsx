@@ -1,7 +1,7 @@
 import React from 'react';
 
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, TypedNavigator } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import MainView from './assets/view/MainView';

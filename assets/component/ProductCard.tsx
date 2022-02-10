@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 
 interface Rating {
@@ -17,10 +17,14 @@ interface Product {
 }
 
 interface Props {
-    product: Product;
+    product: Product,
+    callableAddMethod: CallableFunction,
+    callableRemoveMethod: CallableFunction
 }
     
-const ProductCard: React.FC<Props> = ({ product }) => {
+const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }) => {
+    const [hasInTheCart, SetHasInTheCart] = useState<boolean>(false);
+
     return(
         <View style={{ width: '48%', marginHorizontal: 5, marginBottom: 10 }}>
             <View style={{ width: '80%', height: 180, alignSelf: 'center', marginVertical: 10 }}>
@@ -39,9 +43,23 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
                     <Text style={{ color: '#00C851', fontWeight: 'bold', 'fontSize': 20 }}>{`$ ${(Math.round(product.price * 100) / 100).toFixed(2)}`}</Text>
-                    <TouchableOpacity style={{ backgroundColor: '#FF6E63', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 20 }}>
-                        <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>buy</Text>
-                    </TouchableOpacity>
+                    
+                    {hasInTheCart 
+                        ?
+                        <TouchableOpacity style={{ backgroundColor: '#ffffff', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 20, borderWidth: 1, borderColor: '#EC2B2B' }} onPress={() => {
+                            callableRemoveMethod();
+                            SetHasInTheCart(false);
+                        }}>
+                            <Image style={{ height: 20, width: 20 }} source={require("../image/remove-item-icon.png")} />
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={{ backgroundColor: '#FF6E63', paddingHorizontal: 17, paddingVertical: 7, borderRadius: 20 }} onPress={() => {
+                            callableAddMethod();
+                            SetHasInTheCart(true);
+                        }}>
+                            <Image style={{ height: 18, width: 18 }} source={require("../image/cart-white-icon.png")} />
+                        </TouchableOpacity>
+                    }
                 </View>
             </View>
         </View>
