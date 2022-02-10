@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, VirtualizedList } from 'react-native';
 
 import ProductCard from './assets/component/ProductCard';
 import InputWithButton from './assets/component/InputWithButton';
+import CategoryButton from './assets/component/CategoryButton';
 
 import { ProductService }  from './assets/service/ProductService';
 
@@ -25,13 +26,17 @@ interface Product {
 export default function App() {
   const [productsList, SetProductsList] = useState<Product[]>([]);
   const [searchableList, SetSearchableList] = useState<Product[]>([]);
-
   const [searchText, SetSearchText] = useState<string>("");
+  const [categoriesList, SetCategoriesList] = useState<string[]>([]);
 
   useEffect(() => {
     ProductService.GetProducts().then(products => {
       SetProductsList(products);
       SetSearchableList(products);
+    });
+
+    ProductService.GetCategories().then(categories => {
+      SetCategoriesList(["all", ...categories]);
     });
   }, []);
 
@@ -59,9 +64,24 @@ export default function App() {
 
       {productsList.length == 0 
         ?
-        <Text>Carregando...</Text>
+        <Text>Carregando produtos</Text>
         :
         <FlatList<Product>
+          ListHeaderComponent={
+              <FlatList<string>
+              style={{ height: 40, marginBottom: 10 }}
+              data={categoriesList}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => {
+                return(
+                  <CategoryButton categoryName={item} selected={false} />
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={1}
+            />
+          }
           style={{ paddingHorizontal: 5}}
           data={productsList}
           renderItem={({ item }) => {
