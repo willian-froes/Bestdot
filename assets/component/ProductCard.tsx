@@ -42,7 +42,7 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                 </View>
                 
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-                    <Text style={{ color: '#00C851', fontWeight: 'bold', 'fontSize': 20 }}>{`$ ${(Math.round(product.price * 100) / 100).toFixed(2)}`}</Text>
+                    <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 20 }}>{`$ ${(Math.round(product.price * 100) / 100).toFixed(2)}`}</Text>
                     
                     {hasInTheCart 
                         ?

@@ -59,7 +59,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order")}>
+            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart })}>
                 <InputWithButton callableMethod={() => {
                         let filteredProducts = searchableList.filter((product) => {
                             return product.title.toLowerCase().includes(searchText.toLowerCase());
@@ -88,53 +88,53 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                 </View>
                 :
                 <FlatList<Product>
-                ListHeaderComponent={
-                    <>
-                        <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
-                            <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("../image/banner-sales-image.png")} />
-                        </View>
+                    ListHeaderComponent={
+                        <>
+                            <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
+                                <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("../image/banner-sales-image.png")} />
+                            </View>
 
-                        <View style={{ marginHorizontal: 5 }}>
-                            <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
-                            <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
-                        </View>
+                            <View style={{ marginHorizontal: 5 }}>
+                                <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
+                                <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
+                            </View>
 
-                        <FlatList<string>
-                            style={{ height: 40, marginBottom: 20, marginTop: 15 }}
-                            data={categoriesList}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={({ item }) => {
-                                return(
-                                    <CategoryButton categoryName={item} selected={false} />
-                                );
-                            }}
-                            keyExtractor={(item, index) => index.toString()}
-                            numColumns={1}
-                        />
-                    </>
-                }
-                style={{ paddingHorizontal: 5}}
-                data={productsList}
-                renderItem={({ item }) => {
-                    return(
-                        <ProductCard product={item} 
-                            callableAddMethod={() => {
-                                SetCart([{ productId: item.id, quantity: 1 }, ...cart]);
-                                SetCartLength(cartLength+1);
-                            }}
+                            <FlatList<string>
+                                style={{ height: 40, marginBottom: 20, marginTop: 15 }}
+                                data={categoriesList}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => {
+                                    return(
+                                        <CategoryButton categoryName={item} selected={false} />
+                                    );
+                                }}
+                                keyExtractor={(item, index) => index.toString()}
+                                numColumns={1}
+                            />
+                        </>
+                    }
+                    style={{ paddingHorizontal: 5}}
+                    data={productsList}
+                    renderItem={({ item }) => {
+                        return(
+                            <ProductCard product={item} 
+                                callableAddMethod={() => {
+                                    SetCart([{ productId: item.id, quantity: 1 }, ...cart]);
+                                    SetCartLength(cartLength+1);
+                                }}
 
-                            callableRemoveMethod={() => {
-                                const index = cart.map(p => p.productId).indexOf(item.id);
-                                cart.splice(index, 1);
-                                SetCart(cart);
-                                SetCartLength(cartLength-1);
-                            }}
-                        />
-                    );
-                }}
-                keyExtractor={(item, index) => index.toString()}
-                numColumns={2}
+                                callableRemoveMethod={() => {
+                                    const index = cart.map(p => p.productId).indexOf(item.id);
+                                    cart.splice(index, 1);
+                                    SetCart(cart);
+                                    SetCartLength(cartLength-1);
+                                }}
+                            />
+                        );
+                    }}
+                    keyExtractor={(item, index) => index.toString()}
+                    numColumns={2}
                 />
             }
         </View>
