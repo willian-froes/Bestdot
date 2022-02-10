@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
 
 import ProductCard from './assets/component/ProductCard';
+import InputWithButton from './assets/component/InputWithButton';
+
 import { ProductService }  from './assets/service/ProductService';
 
 interface Rating {
@@ -22,10 +24,14 @@ interface Product {
 
 export default function App() {
   const [productsList, SetProductsList] = useState<Product[]>([]);
+  const [searchableList, SetSearchableList] = useState<Product[]>([]);
+
+  const [searchText, SetSearchText] = useState<string>("");
 
   useEffect(() => {
     ProductService.GetProducts().then(products => {
       SetProductsList(products);
+      SetSearchableList(products);
     });
   }, []);
 
@@ -33,6 +39,23 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Text>List of products</Text>
+
+      <InputWithButton callableMethod={() => {
+          let filteredProducts = searchableList.filter((product) => {
+            return product.title.toLowerCase().includes(searchText.toLowerCase());
+          });
+
+          SetProductsList(filteredProducts);
+        }}
+        callableCancelMethod={()=> {
+          SetProductsList(productsList);
+          SetSearchText("");
+        }}
+        inputPlaceholder={"Find the best for you!"}
+        buttonIcon={require("./assets/image/search-icon.png")}
+        callableSetter={SetSearchText}
+        value={searchText}
+      />
 
       {productsList.length == 0 
         ?
