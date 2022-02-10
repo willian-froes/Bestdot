@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, VirtualizedList } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, VirtualizedList, Dimensions } from 'react-native';
 
 import ProductCard from './assets/component/ProductCard';
 import InputWithButton from './assets/component/InputWithButton';
@@ -69,8 +69,6 @@ export default function App() {
           />
         </Navbar>
 
-        <View style={{ width: '100%', height: 3, backgroundColor: '#FF5A4D', marginTop: 10 }}/>
-
         {productsList.length == 0 
           ?
           <Text>Carregando produtos</Text>
@@ -78,6 +76,10 @@ export default function App() {
           <FlatList<Product>
             ListHeaderComponent={
               <>
+                <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
+                  <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("./assets/image/banner-sales-image.png")} />
+                </View>
+
                 <View style={{ marginHorizontal: 5 }}>
                   <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
                   <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
