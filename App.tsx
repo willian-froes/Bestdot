@@ -68,19 +68,26 @@ export default function App() {
         :
         <FlatList<Product>
           ListHeaderComponent={
+            <>
+              <View style={{ marginHorizontal: 5 }}>
+                <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
+                <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
+              </View>
+
               <FlatList<string>
-              style={{ height: 40, marginBottom: 10 }}
-              data={categoriesList}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => {
-                return(
-                  <CategoryButton categoryName={item} selected={false} />
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-            />
+                style={{ height: 40, marginBottom: 20, marginTop: 15 }}
+                data={categoriesList}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => {
+                  return(
+                    <CategoryButton categoryName={item} selected={false} />
+                  );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={1}
+              />
+            </>
           }
           style={{ paddingHorizontal: 5}}
           data={productsList}
