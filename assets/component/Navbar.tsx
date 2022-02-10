@@ -3,10 +3,11 @@ import { Text, View, TouchableOpacity, Image } from 'react-native';
 
 interface Props {
     cartLength: number,
+    callableGoTo: CallableFunction
     children: ReactNode
 }
     
-const Navbar: React.FC<Props> = ({ cartLength, children }) => {
+const Navbar: React.FC<Props> = ({ cartLength, callableGoTo, children }) => {
     return(
         <>
             <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold', marginBottom: 15, marginHorizontal: 10  }}>Hi, Willian!</Text>
@@ -20,7 +21,7 @@ const Navbar: React.FC<Props> = ({ cartLength, children }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity style={{ backgroundColor: '#FF5A4D', flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 15, marginRight: 12 }}>
+                    <TouchableOpacity style={{ backgroundColor: '#FF5A4D', flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 15, marginRight: 12 }} onPress={() => callableGoTo()}>
                         <Text style={{ color: '#ffffff', fontWeight: 'bold', marginRight: 10 }}>{cartLength}</Text>
                         <Image style={{ width: 20, height: 20 }} source={require("../image/cart-white-icon.png")} />
                     </TouchableOpacity>
