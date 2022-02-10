@@ -4,6 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Text, View, StyleSheet } from 'react-native';
 
 import InputWithButton from '../component/InputWithButton';
+import Navbar from '../component/Navbar';
 
 interface Props {
     navigation: StackNavigationProp<any,any>
@@ -16,18 +17,24 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <InputWithButton 
-                callableMethod={() => {
-                    console.log("coupon!");
-                }}
-                callableCancelMethod={()=> {
-                    SetCouponText("");
-                }}
-                inputPlaceholder={"Have coupon? Insert here!"}
-                buttonIcon={require("../image/check-coupon-icon.png")}
-                callableSetter={SetCouponText}
-                value={couponText}
-            />
+            <Navbar isMain={false} callableGoTo={() => navigation.goBack()} >
+                <Text>My order progress...</Text>
+            </Navbar>
+
+            <View style={{ marginVertical: 10 }}>
+                <InputWithButton 
+                    callableMethod={() => {
+                        console.log("coupon!");
+                    }}
+                    callableCancelMethod={()=> {
+                        SetCouponText("");
+                    }}
+                    inputPlaceholder={"Have coupon? Insert here!"}
+                    buttonIcon={require("../image/check-coupon-icon.png")}
+                    callableSetter={SetCouponText}
+                    value={couponText}
+                />
+            </View>
         </View>
     );
 }

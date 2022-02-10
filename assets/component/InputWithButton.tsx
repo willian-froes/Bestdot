@@ -25,7 +25,7 @@ const InputWithButton: React.FC<Props> = ({ callableMethod, callableCancelMethod
             }
 
             <TouchableOpacity style={{ backgroundColor: '#FF6E63', borderTopLeftRadius: 15, borderBottomLeftRadius: 15 }} onPress={() => callableMethod()}>
-                <Image style={{ width: 25, height: 25, marginLeft: 20, marginRight: 80, marginVertical: 22 }} source={buttonIcon} />
+                <Image style={{ width: 25, height: 25, marginLeft: 20, marginRight: 60, marginVertical: 22 }} source={buttonIcon} />
             </TouchableOpacity>
         </View>
     );

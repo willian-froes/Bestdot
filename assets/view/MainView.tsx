@@ -59,7 +59,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar cartLength={cartLength} callableGoTo={() => navigation.navigate("Order")}>
+            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order")}>
                 <InputWithButton callableMethod={() => {
                         let filteredProducts = searchableList.filter((product) => {
                             return product.title.toLowerCase().includes(searchText.toLowerCase());
