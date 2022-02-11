@@ -25,15 +25,25 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
     const [cartSize, SetCartSize] = useState<number>(0);
 
+    const [cartIsLoaded, SetCartIsLoaded] = useState<boolean>(false);
+
     useEffect(() => {
         const cart: CartProduct[] = route.params ? route.params.cart : [];
 
         if(detailedCart.length == 0) {
             cart.forEach(async (item)=> {
                 await ProductService.GetProductById(item).then(async (product) => {
-                    detailedCart.push({ ...product, quantity: item.quantity })
+                    detailedCart.push({ 
+                        id: product.id,
+                        image: product.image,
+                        title: product.title,
+                        totalPrice: item.quantity? product.price * item.quantity : product.price,
+                        price: product.price,
+                        quantity: item.quantity 
+                    })
                     SetDetailedCart(detailedCart);
                     SetCartSize(cartSize+1);
+                    SetCartIsLoaded(true);
                 });
             });
         }
@@ -47,7 +57,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                 <Text>My order progress...</Text>
             </Navbar>
 
-            {cartSize == 0
+            {cartSize == 0 && cartIsLoaded
                 ?
                 <Text>Loading cart...</Text>
                 :
@@ -70,8 +80,14 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                     }
                     data={detailedCart}
                     renderItem={({ item }) => {
+                        let SetCart, SetCartLength;
+
+                        if(route.params) {
+                            SetCart = route.params.callableSetCart;
+                            SetCartLength = route.params.callableSetCartLength;
+                        }
                         return(
-                            <CartItemCard item={item} />
+                            <CartItemCard item={item} callableSetCart={SetCart} cart={route.params ? route.params.cart : []} callableSetCartLength={SetCartLength} callableSetDetailedCart={SetDetailedCart} detailedCart={detailedCart} />
                         );
                     }}
                     keyExtractor={(item, index) => index.toString()}

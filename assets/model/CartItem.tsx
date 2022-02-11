@@ -1,9 +1,10 @@
 interface CartItem {
+    id: number,
     image: string,
     title: string,
-    totalPrice: number,
+    totalPrice?: number,
     price: number,
-    quantity: number
+    quantity?: number
 }
 
 export default CartItem;

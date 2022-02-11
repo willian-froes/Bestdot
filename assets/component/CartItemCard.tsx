@@ -1,13 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
     
 import CartItem from '../model/CartItem';
+import CartProduct from '../model/CartProduct';
 
 interface Props {
-    item: CartItem
+    item: CartItem,
+    callableSetDetailedCart: CallableFunction,
+    detailedCart: CartItem[],
+    callableSetCart: CallableFunction,
+    cart: CartProduct[],
+    callableSetCartLength: CallableFunction
 }
 
-const CartItemCard: React.FC<Props> = ({ item }) => {
+const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength }) => {
+    const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
+
+    const SetQuantity = (isIncrement: boolean) => {
+        detailedCart.filter((cartItem) => {
+            if(item.id == cartItem.id && cartItem.quantity && item.quantity) {
+                item.quantity = isIncrement ? item.quantity + 1 : itemQuantity > 1 ? item.quantity - 1 : 1;
+                SetItemQuantity(item.quantity);
+            }
+            
+        });
+
+        cart.filter((cartItem) => {
+            if(item.id == cartItem.productId && cartItem.quantity) {
+                cartItem.quantity = isIncrement ? cartItem.quantity + 1 : itemQuantity > 1 ? cartItem.quantity - 1 : 1;
+            }
+        });
+
+        callableSetCart(cart);
+        callableSetDetailedCart(detailedCart);
+    }
+
     return(
         <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 10 }}>
             <View style={{ flexDirection: 'column' }}>
@@ -25,7 +52,7 @@ const CartItemCard: React.FC<Props> = ({ item }) => {
                 <View style={{ flex: 1, flexDirection: 'column' }}>
                     <View style={{ flex: 1, flexDirection: 'column' }}>
                         <Text style={{ flexWrap: 'wrap', fontSize: 16, color: '#000000', fontWeight: 'bold' }} numberOfLines={2}>{item.title}</Text>
-                        <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 20 }}>{`$ ${(Math.round(item.price * 100) / 100).toFixed(2)}`}</Text>
+                        <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 20 }}>{`$ ${(Math.round((item.quantity ? item.price * item.quantity : item.price) * 100) / 100).toFixed(2)}`}</Text>
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -34,13 +61,13 @@ const CartItemCard: React.FC<Props> = ({ item }) => {
                             <Text style={{ fontSize: 16, color: '#B5B5B5' }}>/item</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity style={{ borderWidth: 1, borderColor: '#B5B5B5', padding: 8, borderRadius: 10 }}>
+                            <TouchableOpacity style={{ borderWidth: 1, borderColor: '#B5B5B5', padding: 8, borderRadius: 10 }} onPress={() => SetQuantity(false)}>
                                 <Image style={{ width: 15, height: 15 }} source={require("../image/decrement-icon.png")} />
                             </TouchableOpacity>
 
-                            <Text style={{ fontSize: 16, color: '#FF6E63', fontWeight: 'bold', marginHorizontal: 10 }}>0</Text>
+                            <Text style={{ fontSize: 16, color: '#FF6E63', fontWeight: 'bold', marginHorizontal: 10 }}>{itemQuantity}</Text>
 
-                            <TouchableOpacity style={{ borderWidth: 1, borderColor: '#FF6E63', backgroundColor: '#FF6E63', padding: 8, borderRadius: 10 }}>
+                            <TouchableOpacity style={{ borderWidth: 1, borderColor: '#FF6E63', backgroundColor: '#FF6E63', padding: 8, borderRadius: 10 }} onPress={() => SetQuantity(true)}>
                                 <Image style={{ width: 15, height: 15 }} source={require("../image/increment-icon.png")} />
                             </TouchableOpacity>
                         </View>
