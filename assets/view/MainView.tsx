@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
@@ -14,7 +15,6 @@ import CartProduct from '../model/CartProduct';
 
 import { ProductService }  from '../service/ProductService';
 
-import { useFocusEffect } from '@react-navigation/native';
 
 interface Props {
     navigation: StackNavigationProp<any, any>

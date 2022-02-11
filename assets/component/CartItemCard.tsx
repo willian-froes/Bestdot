@@ -11,29 +11,33 @@ interface Props {
     callableSetCart: CallableFunction,
     cart: CartProduct[],
     callableSetCartLength: CallableFunction,
-    cartLength: number
+    cartLength: number,
+    callableGetTotalItems: CallableFunction,
+    callableGetTotalPrice: CallableFunction
 }
 
-const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength }) => {
+const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength, callableGetTotalItems, callableGetTotalPrice }) => {
     const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
-    
+
     const SetQuantity = (isIncrement: boolean) => {
         detailedCart.filter((cartItem) => {
             if(item.id == cartItem.id && cartItem.quantity && item.quantity) {
                 item.quantity = isIncrement ? item.quantity + 1 : itemQuantity > 1 ? item.quantity - 1 : 1;
                 SetItemQuantity(item.quantity);
             }
-            
         });
-
+        
         cart.filter((cartItem) => {
             if(item.id == cartItem.productId && cartItem.quantity) {
                 cartItem.quantity = isIncrement ? cartItem.quantity + 1 : itemQuantity > 1 ? cartItem.quantity - 1 : 1;
             }
         });
-
+        
         callableSetCart(cart);
         callableSetDetailedCart(detailedCart);
+
+        callableGetTotalItems();
+        callableGetTotalPrice(detailedCart);
     }
 
     return(
