@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
 
 import ProductCard from '../component/ProductCard';
@@ -13,6 +13,8 @@ import Product from '../model/Product';
 import CartProduct from '../model/CartProduct';
 
 import { ProductService }  from '../service/ProductService';
+
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Props {
     navigation: StackNavigationProp<any, any>
@@ -27,22 +29,24 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     const [cart, SetCart] = useState<CartProduct[]>([]);
     const [cartLength, SetCartLength] = useState<number>(0); 
 
-    useEffect(() => {
-        ProductService.GetProducts().then(products => {
+    useFocusEffect(useCallback(() => { 
+        SetProductsList([]);
+
+        ProductService.GetProducts().then((products) => {
             SetProductsList(products);
             SetSearchableList(products);
         });
-
+    
         ProductService.GetCategories().then(categories => {
             SetCategoriesList(["all", ...categories]);
         });
-    }, []);
+    }, []));
 
     return (
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart: cart, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
+            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
                 <InputWithButton callableMethod={() => {
                         let filteredProducts = searchableList.filter((product) => {
                             return product.title.toLowerCase().includes(searchText.toLowerCase());
@@ -100,6 +104,12 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     style={{ paddingHorizontal: 5}}
                     data={productsList}
                     renderItem={({ item }) => {
+                        let boughtItems = cart.filter((cartItem) => {
+                            return cartItem.productId == item.id
+                        });
+
+                        item.isBought = boughtItems != undefined && boughtItems.length > 0;
+                        
                         return(
                             <ProductCard product={item} 
                                 callableAddMethod={() => {
@@ -108,7 +118,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 }}
 
                                 callableRemoveMethod={() => {
-                                    const index = cart.map(p => p.productId).indexOf(item.id);
+                                    const index = cart.map(product => product.productId).indexOf(item.id);
                                     cart.splice(index, 1);
                                     SetCart(cart);
                                     SetCartLength(cartLength-1);

@@ -25,8 +25,6 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
     const [cartSize, SetCartSize] = useState<number>(0);
 
-    const [cartIsLoaded, SetCartIsLoaded] = useState<boolean>(false);
-
     useEffect(() => {
         const cart: CartProduct[] = route.params ? route.params.cart : [];
 
@@ -43,7 +41,6 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                     })
                     SetDetailedCart(detailedCart);
                     SetCartSize(cartSize+1);
-                    SetCartIsLoaded(true);
                 });
             });
         }
@@ -57,7 +54,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                 <Text>My order progress...</Text>
             </Navbar>
 
-            {cartSize == 0 && cartIsLoaded
+            {cartSize == 0
                 ?
                 <Text>Loading cart...</Text>
                 :
@@ -87,7 +84,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                             SetCartLength = route.params.callableSetCartLength;
                         }
                         return(
-                            <CartItemCard item={item} callableSetCart={SetCart} cart={route.params ? route.params.cart : []} callableSetCartLength={SetCartLength} callableSetDetailedCart={SetDetailedCart} detailedCart={detailedCart} />
+                            <CartItemCard item={item} callableSetCart={SetCart} cart={route.params ? route.params.cart : []} callableSetCartLength={SetCartLength} cartLength={route.params ? route.params.cartLength : 0} callableSetDetailedCart={SetDetailedCart} detailedCart={detailedCart} />
                         );
                     }}
                     keyExtractor={(item, index) => index.toString()}

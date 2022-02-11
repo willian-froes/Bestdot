@@ -10,12 +10,13 @@ interface Props {
     detailedCart: CartItem[],
     callableSetCart: CallableFunction,
     cart: CartProduct[],
-    callableSetCartLength: CallableFunction
+    callableSetCartLength: CallableFunction,
+    cartLength: number
 }
 
-const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength }) => {
+const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength }) => {
     const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
-
+    
     const SetQuantity = (isIncrement: boolean) => {
         detailedCart.filter((cartItem) => {
             if(item.id == cartItem.id && cartItem.quantity && item.quantity) {
@@ -38,7 +39,20 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
     return(
         <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 10 }}>
             <View style={{ flexDirection: 'column' }}>
-                <TouchableOpacity style={{ borderWidth: 1, borderColor: '#EC2B2B', padding: 10, borderTopLeftRadius: 15, borderBottomRightRadius: 15 }}>
+                <TouchableOpacity style={{ borderWidth: 1, borderColor: '#EC2B2B', padding: 10, borderTopLeftRadius: 15, borderBottomRightRadius: 15 }} onPress={() => {
+                    const index = cart.map(product => product.productId).indexOf(item.id);
+                    callableSetCartLength(cartLength-1);
+                    let detailedCartAux: CartItem[] = [];
+
+                    cart.splice(index, 1);
+                    detailedCart.filter((detailedItem) => {
+                        if(detailedItem.id !== item.id) detailedCartAux.push(detailedItem);
+                    });
+
+                    callableSetCart(cart);
+                    callableSetDetailedCart(detailedCartAux);
+
+                }}>
                     <Image style={{ width: 10, height: 10 }} source={require("../image/remove-icon.png")}/>
                 </TouchableOpacity>
                 <View style={{ flexGrow: 1, borderColor: '#F0F0F0', borderBottomWidth: 1, borderLeftWidth: 1, borderBottomLeftRadius: 15 }}></View>

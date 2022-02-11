@@ -10,7 +10,7 @@ interface Props {
 }
     
 const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }) => {
-    const [hasInTheCart, SetHasInTheCart] = useState<boolean>(false);
+    const [hasInTheCart, SetHasInTheCart] = useState<boolean>(product.isBought ? true : false);
 
     return(
         <View style={{ width: '48%', marginHorizontal: 5, marginBottom: 10 }}>
@@ -31,7 +31,7 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
                     <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 20 }}>{`$ ${(Math.round(product.price * 100) / 100).toFixed(2)}`}</Text>
                     
-                    {hasInTheCart 
+                    {hasInTheCart
                         ?
                         <TouchableOpacity style={{ backgroundColor: '#ffffff', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 20, borderWidth: 1, borderColor: '#EC2B2B' }} onPress={() => {
                             callableRemoveMethod();
