@@ -9,27 +9,10 @@ import InputWithButton from '../component/InputWithButton';
 import CategoryButton from '../component/CategoryButton';
 import Navbar from '../component/Navbar';
 
+import Product from '../model/Product';
+import CartProduct from '../model/CartProduct';
+
 import { ProductService }  from '../service/ProductService';
-
-interface Rating {
-    rate: number,
-    count: number
-}
-
-interface Product {
-    id: number,
-    title: string,
-    price: number,
-    description: string,
-    category: string,
-    image: string,
-    rating: Rating
-}
-
-interface CartProduct {
-    productId: number,
-    quantity?: number
-}
 
 interface Props {
     navigation: StackNavigationProp<any, any>

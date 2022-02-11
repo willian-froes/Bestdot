@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 
-interface Rating {
-    rate: number,
-    count: number
-}
-
-interface Product {
-    id: number,
-    title: string,
-    price: number,
-    description: string,
-    category: string,
-    image: string,
-    rating: Rating
-}
+import Product from '../model/Product';
 
 interface Props {
     product: Product,

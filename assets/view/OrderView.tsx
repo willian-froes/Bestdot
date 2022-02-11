@@ -10,22 +10,19 @@ import Navbar from '../component/Navbar';
 import { RouteProp } from '@react-navigation/native';
 
 import { ProductService }  from '../service/ProductService';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-interface CartProduct {
-    productId: number,
-    quantity?: number
-}
+import CartProduct from '../model/CartProduct';
+import CartItem from '../model/CartItem';
 
 interface Props {
-    navigation: StackNavigationProp<any,any>,
-    route: RouteProp<any,any>
+    navigation: StackNavigationProp<any, any>,
+    route: RouteProp<any, any>
 }
 
 const MainView: React.FC<Props> = ({ navigation, route }) => {
     const [couponText, SetCouponText] = useState<string>("");
 
-    const [detailedCart, SetDetailedCart] = useState<any>([]);
+    const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
     const [cartSize, SetCartSize] = useState<number>(0);
 
     useEffect(() => {
@@ -54,7 +51,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                 ?
                 <Text>Loading cart...</Text>
                 :
-                <FlatList<any>
+                <FlatList<CartItem>
                     ListHeaderComponent={
                         <View style={{ marginVertical: 10 }}>
                             <InputWithButton 

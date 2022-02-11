@@ -1,15 +1,17 @@
 import React from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
     
+import CartItem from '../model/CartItem';
+
 interface Props {
-    item: any
+    item: CartItem
 }
 
 const CartItemCard: React.FC<Props> = ({ item }) => {
     return(
         <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 10 }}>
             <View style={{ flexDirection: 'column' }}>
-                <TouchableOpacity style={{ borderWidth: 1, borderColor: '#EC2B2B', padding: 8, borderTopLeftRadius: 15, borderBottomRightRadius: 15 }}>
+                <TouchableOpacity style={{ borderWidth: 1, borderColor: '#EC2B2B', padding: 10, borderTopLeftRadius: 15, borderBottomRightRadius: 15 }}>
                     <Image style={{ width: 10, height: 10 }} source={require("../image/remove-icon.png")}/>
                 </TouchableOpacity>
                 <View style={{ flexGrow: 1, borderColor: '#F0F0F0', borderBottomWidth: 1, borderLeftWidth: 1, borderBottomLeftRadius: 15 }}></View>

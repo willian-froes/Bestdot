@@ -54,7 +54,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                         <></>
                     }
 
-                    <Image style={{ width: 42, height: 42, borderRadius: 42, borderWidth: 3, borderColor: '#FF5A4D', marginTop: 15, marginRight: isMain ? 0 : 10 }} source={require("../image/user-temp-image.jpg")} />
+                    <Image style={{ width: 42, height: 42, borderRadius: 42, borderWidth: 3, borderColor: '#FF5A4D', marginTop: isMain ? 0 : 15, marginRight: isMain ? 0 : 10 }} source={require("../image/user-temp-image.jpg")} />
                 </View>
             </View>
 

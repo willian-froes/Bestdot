@@ -1,9 +1,6 @@
-const url: RequestInfo = "https://fakestoreapi.com";
+import CartProduct from '../model/CartProduct';
 
-interface CartProduct {
-    productId: number,
-    quantity?: number
-}
+const url: RequestInfo = "https://fakestoreapi.com";
 
 export const ProductService = {
     GetProducts: async function() {
