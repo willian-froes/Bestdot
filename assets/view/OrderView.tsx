@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Text, View, StyleSheet, FlatList } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 
 import InputWithButton from '../component/InputWithButton';
 import CartItemCard from '../component/CartItemCard';
@@ -13,7 +13,6 @@ import { ProductService }  from '../service/ProductService';
 
 import CartProduct from '../model/CartProduct';
 import CartItem from '../model/CartItem';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
     navigation: StackNavigationProp<any, any>,
@@ -72,7 +71,29 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
             <Navbar isMain={false} callableGoTo={() => navigation.goBack()} >
-                <Text>My order progress...</Text>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontWeight: 'bold', color: '#000000', fontSize: 16 }}>Done order in 3 steps</Text>
+
+                    <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <View style={{ backgroundColor: '#FF6E63', padding: 10, borderRadius: 15, borderWidth: 1, borderColor: '#FF6E63' }}>
+                            <Image style={{ width: 22, height: 22 }} source={require("../image/cart-white-icon.png")}/>
+                        </View>
+
+                        <View style={{ flexGrow: 2, borderTopWidth: 2, height: 1, flexDirection: 'row', borderColor: '#F0F0F0', borderRadius: 1, marginHorizontal: 5 }}></View>
+
+                        <View style={{ backgroundColor: '#ffffff', padding: 10, borderRadius: 15, borderWidth: 1, borderColor: '#B5B5B5' }}>
+                            <Image style={{ width: 22, height: 22 }} source={require("../image/location-icon.png")}/>
+                        </View>
+
+                        <View style={{ flexGrow: 2, borderTopWidth: 2, height: 1, flexDirection: 'row', borderColor: '#F0F0F0', borderRadius: 1, marginHorizontal: 5 }}></View>
+
+                        <View style={{ backgroundColor: '#ffffff', padding: 10, borderRadius: 15, borderWidth: 1, borderColor: '#B5B5B5' }}>
+                            <Image style={{ width: 22, height: 22 }} source={require("../image/payment-icon.png")}/>
+                        </View>
+                    </View>
+
+                    <Text style={{ fontWeight: 'bold', color: '#B5B5B5', fontSize: 16 }}>First, check your items here!</Text>
+                </View>
             </Navbar>
 
             {cartSize == 0
