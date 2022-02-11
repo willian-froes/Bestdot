@@ -114,14 +114,18 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                             <ProductCard product={item} 
                                 callableAddMethod={() => {
                                     SetCart([{ productId: item.id, quantity: 1 }, ...cart]);
-                                    SetCartLength(cartLength+1);
+
+                                    let length = cartLength+1;
+                                    SetCartLength(length);
                                 }}
 
                                 callableRemoveMethod={() => {
                                     const index = cart.map(product => product.productId).indexOf(item.id);
                                     cart.splice(index, 1);
                                     SetCart(cart);
-                                    SetCartLength(cartLength-1);
+
+                                    let length = cartLength-1;
+                                    SetCartLength(length);
                                 }}
                             />
                         );

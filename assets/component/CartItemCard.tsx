@@ -13,10 +13,14 @@ interface Props {
     callableSetCartLength: CallableFunction,
     cartLength: number,
     callableGetTotalItems: CallableFunction,
-    callableGetTotalPrice: CallableFunction
+    callableSetTotalItems: CallableFunction,
+    callableSetTotalPrice: CallableFunction,
+    callableGetTotalPrice: CallableFunction,
+    totalPrice: number,
+    totalItems: number
 }
 
-const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength, callableGetTotalItems, callableGetTotalPrice }) => {
+const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength, callableGetTotalItems, callableSetTotalItems, callableSetTotalPrice, callableGetTotalPrice, totalPrice, totalItems }) => {
     const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
 
     const SetQuantity = (isIncrement: boolean) => {
@@ -44,8 +48,8 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
         <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 10 }}>
             <View style={{ flexDirection: 'column' }}>
                 <TouchableOpacity style={{ borderWidth: 1, borderColor: '#EC2B2B', padding: 10, borderTopLeftRadius: 15, borderBottomRightRadius: 15 }} onPress={() => {
-                    const index = cart.map(product => product.productId).indexOf(item.id);
                     callableSetCartLength(cartLength-1);
+                    const index = cart.map(product => product.productId).indexOf(item.id);
                     let detailedCartAux: CartItem[] = [];
 
                     cart.splice(index, 1);
@@ -56,6 +60,8 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                     callableSetCart(cart);
                     callableSetDetailedCart(detailedCartAux);
 
+                    callableSetTotalPrice(totalPrice-(item.quantity ? item.price*item.quantity : item.price));
+                    callableGetTotalItems(totalItems-(item.quantity ? item.quantity : 1));
                 }}>
                     <Image style={{ width: 10, height: 10 }} source={require("../image/remove-icon.png")}/>
                 </TouchableOpacity>

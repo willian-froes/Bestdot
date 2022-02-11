@@ -10,9 +10,11 @@ import Navbar from '../component/Navbar';
 import { RouteProp } from '@react-navigation/native';
 
 import { ProductService }  from '../service/ProductService';
+import { CouponService }  from '../service/CouponService';
 
 import CartProduct from '../model/CartProduct';
 import CartItem from '../model/CartItem';
+import Coupon from '../model/Coupon';
 
 interface Props {
     navigation: StackNavigationProp<any, any>,
@@ -27,6 +29,8 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
 
     const [totalItems, SetTotalItems] = useState<any>(0);
     const [totalPrice, SetTotalPrice] = useState<any>(0);
+
+    const [coupon, SetCoupon] = useState<Coupon | null>();
 
     const GetTotalItems = () => {
         if(route.params) {
@@ -105,7 +109,21 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                         <View style={{ marginVertical: 10 }}>
                             <InputWithButton 
                                 callableMethod={() => {
-                                    console.log("coupon!");
+                                    CouponService.GetCouponByHash(couponText).then((coupons) => {
+                                        if(coupons.length > 0 && coupons[0].isAvailable) {
+                                            CouponService.UpdateCouponAvailability(coupons[0].id, false).then((usedCoupon) => {
+                                                console.log(usedCoupon.isAvailable);
+                                                
+                                                if(usedCoupon.isAvailable) {
+                                                    SetCoupon(usedCoupon);
+                                                } else {
+                                                    console.log("Oops... fail to use this coupon, try it again");
+                                                }
+                                            });
+                                        } else {
+                                            console.log("Sorry... this coupon invalid or not found");
+                                        }
+                                    });
                                 }}
                                 callableCancelMethod={()=> {
                                     SetCouponText("");
@@ -135,7 +153,11 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                                 callableSetDetailedCart={SetDetailedCart} 
                                 detailedCart={detailedCart}
                                 callableGetTotalItems={GetTotalItems}
+                                callableSetTotalItems={SetTotalItems}
                                 callableGetTotalPrice={GetTotalPrice}
+                                callableSetTotalPrice={SetTotalPrice}
+                                totalPrice={totalPrice}
+                                totalItems={totalItems}
                             />
                         );
                     }}
@@ -147,8 +169,23 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                 <View style={{ width: '100%', height: 3, backgroundColor: '#FF5A4D', marginBottom: 10 }}/>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10 }}>
-                    <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16 }}>Products ({totalItems} items):</Text>
+                    <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16 }}>Products ({totalItems} {`item${totalItems > 0 ? 's' : ''}`}):</Text>
                     <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 16 }}>{`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`}</Text>
+                </View>
+
+                {coupon
+                    ?
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10, marginTop: 10 }}>
+                        <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16 }}>Coupon {coupon?.hash} discount:</Text>
+                        <Text style={{ color: '#EC2B2B', fontWeight: 'bold', fontSize: 16 }}>{`-$ ${(Math.round((totalPrice * coupon?.discount) * 100) / 100).toFixed(2)}`}</Text>
+                    </View>
+                    :
+                    <></>
+                }
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10, marginTop: 10 }}>
+                    <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16 }}>Subtotal:</Text>
+                    <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 16 }}>{`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`}</Text>
                 </View>
                 
                 <TouchableOpacity style={{ backgroundColor: '#FF6E63', margin: 10, borderRadius: 15, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
