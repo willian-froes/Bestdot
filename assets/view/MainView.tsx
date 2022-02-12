@@ -3,12 +3,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useCallback, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 
 import ProductCard from '../component/ProductCard';
 import InputWithButton from '../component/InputWithButton';
 import CategoryButton from '../component/CategoryButton';
 import Navbar from '../component/Navbar';
+import Loader from '../component/Loader';
 
 import Product from '../model/Product';
 import CartProduct from '../model/CartProduct';
@@ -47,32 +48,33 @@ const MainView: React.FC<Props> = ({ navigation }) => {
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
             <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
-                <InputWithButton callableMethod={() => {
-                        let filteredProducts = searchableList.filter((product) => {
-                            return product.title.toLowerCase().includes(searchText.toLowerCase());
-                        });
+                {productsList.length == 0 || categoriesList.length == 0
+                    ?
+                    <></>
+                    :
+                    <InputWithButton callableMethod={() => {
+                            let filteredProducts = searchableList.filter((product) => {
+                                return product.title.toLowerCase().includes(searchText.toLowerCase());
+                            });
 
-                        SetProductsList(filteredProducts);
-                    }}
-                    callableCancelMethod={()=> {
-                        SetProductsList(productsList);
-                        SetSearchText("");
-                    }}
-                    inputPlaceholder={"Find the best for you!"}
-                    buttonIcon={require("../image/search-icon.png")}
-                    callableSetter={SetSearchText}
-                    value={searchText}
-                />
+                            SetProductsList(filteredProducts);
+                        }}
+                        callableCancelMethod={()=> {
+                            SetProductsList(productsList);
+                            SetSearchText("");
+                        }}
+                        inputPlaceholder={"Find the best for you!"}
+                        buttonIcon={require("../image/search-icon.png")}
+                        callableSetter={SetSearchText}
+                        value={searchText}
+                    />
+                }
+                
             </Navbar>
 
             {productsList.length == 0 || categoriesList.length == 0
                 ?
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View>
-                        <ActivityIndicator size="large" color="#FF6E63" />
-                        <Text style={{ color: '#B5B5B5', fontWeight: 'bold', marginTop: 20 }}>Wait, we get the bests for you!</Text>
-                    </View>
-                </View>
+                <Loader description="Wait, we get the bests for you!" />
                 :
                 <FlatList<Product>
                     ListHeaderComponent={
