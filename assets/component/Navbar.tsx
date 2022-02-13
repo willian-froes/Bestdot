@@ -13,7 +13,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
     let splitedTitle = title.split(" ");
 
     return(
-        <>
+        <View style={{ backgroundColor: '#ffffff' }}>
             {isMain
                 ?
                 <>
@@ -64,7 +64,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
             {children}
 
             <View style={{ width: '100%', height: 3, backgroundColor: '#FF5A4D', marginTop: 10 }}/>
-        </>
+        </View>
     );
 }
 

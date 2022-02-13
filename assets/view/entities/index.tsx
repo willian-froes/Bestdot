@@ -21,12 +21,12 @@ const restart = () => {
     const pipeSizePosB = getPipeSizePosPair(windowWidth * 0.9);
     return {
         physics: {engine, world},
-        Bird: Bird(world, 'green', { x: 50, y: 300 }, { height: 40, width: 40 }),
-        Floor: Floor(world, 'red', { x: windowWidth / 2, y: windowHeight }, { height: 50, width: windowWidth }),
-        ObstacleTop1: Obstacle(world, 'ObstacleTop1', 'blue', pipeSizePosA.pipeTop.pos, pipeSizePosA.pipeTop.size ),
-        ObstacleBottom1: Obstacle(world, 'ObstacleBottom1', 'blue', pipeSizePosA.pipeBottom.pos, pipeSizePosA.pipeBottom.size ),
-        ObstacleTop2: Obstacle(world, 'ObstacleTop2', 'blue', pipeSizePosB.pipeTop.pos, pipeSizePosB.pipeTop.size ),
-        ObstacleBottom2: Obstacle(world, 'ObstacleBottom2', 'blue', pipeSizePosB.pipeBottom.pos, pipeSizePosB.pipeBottom.size )
+        Bird: Bird(world, '#000000', { x: 50, y: 300 }, { height: 40, width: 40 }),
+        Floor: Floor(world, '#FF5A4D', { x: windowWidth / 2, y: windowHeight }, { height: 20, width: windowWidth }),
+        ObstacleTop1: Obstacle(world, 'ObstacleTop1', '#FF5A4D', pipeSizePosA.pipeTop.pos, pipeSizePosA.pipeTop.size ),
+        ObstacleBottom1: Obstacle(world, 'ObstacleBottom1', '#FF5A4D', pipeSizePosA.pipeBottom.pos, pipeSizePosA.pipeBottom.size ),
+        ObstacleTop2: Obstacle(world, 'ObstacleTop2', '#FF5A4D', pipeSizePosB.pipeTop.pos, pipeSizePosB.pipeTop.size ),
+        ObstacleBottom2: Obstacle(world, 'ObstacleBottom2', '#FF5A4D', pipeSizePosB.pipeBottom.pos, pipeSizePosB.pipeBottom.size )
     }
 }
 

@@ -12,8 +12,9 @@ const Obstacle = (props: any) => {
 
     return(
         <View style={{
+            backgroundColor: '#FF5A4D',
             borderWidth: 1,
-            borderColor: color,
+            borderColor: 'transparent',
             borderStyle: 'solid',
             position: 'absolute',
             left: xBody,
@@ -34,7 +35,7 @@ export default function (world: World, label: any, color: string, position: any,
         size.height, 
         { 
             label,
-            isStatic: true
+            isStatic: true    
         }
     );
 

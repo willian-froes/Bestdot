@@ -7,6 +7,7 @@ import InputWithButton from '../component/InputWithButton';
 import CartItemCard from '../component/CartItemCard';
 import Navbar from '../component/Navbar';
 import Loader from '../component/Loader';
+import LargeButton from '../component/LargeButton';
 
 import { RouteProp } from '@react-navigation/native';
 
@@ -207,9 +208,8 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                             <Text style={{ color: '#00C851', fontWeight: 'bold', fontSize: 16 }}>{`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`}</Text>
                         </View>
                         
-                        <TouchableOpacity style={{ backgroundColor: '#FF6E63', margin: 10, borderRadius: 15, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#ffffff' }}>Check and confirm receiving address</Text>
-                        </TouchableOpacity>
+                        <LargeButton title="Check and confirm receiving address" method={() => {}}/>
+                        
                     </View>
                 </>
             }

@@ -12,8 +12,10 @@ const Bird = (props: any) => {
 
     return(
         <View style={{
+            backgroundColor: color,
+            borderRadius: 100,
             borderWidth: 1,
-            borderColor: color,
+            borderColor: 'transparent',
             borderStyle: 'solid',
             position: 'absolute',
             left: xBody,
