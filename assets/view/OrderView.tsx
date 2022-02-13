@@ -50,9 +50,11 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
     useEffect(() => {
         const cart: CartProduct[] = route.params ? route.params.cart : [];
 
-        if(detailedCart.length == 0) {
+        if(detailedCart?.length == 0) {
             cart.forEach(async (item)=> {
-                await ProductService.GetProductById(item).then(async (product) => {
+                await ProductService.GetProductById(item).then(async (response) => {
+                    let product: any = response.data;
+
                     detailedCart.push({ 
                         id: product.id,
                         image: product.image,
@@ -75,7 +77,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar isMain={false} callableGoTo={() => navigation.goBack()} >
+            <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Your bests" >
                 {cartSize == 0
                     ?
                     <></>
@@ -117,10 +119,12 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                             <View style={{ marginVertical: 10 }}>
                                 <InputWithButton 
                                     callableMethod={() => {
-                                        CouponService.GetCouponByHash(couponText).then((coupons) => {
+                                        CouponService.GetCouponByHash(couponText).then((response) => {
+                                            let coupons: any = response.data;
+
                                             if(coupons.length > 0 && coupons[0].isAvailable) {
-                                                CouponService.UpdateCouponAvailability(coupons[0].id, false).then((usedCoupon) => {
-                                                    console.log(usedCoupon.isAvailable);
+                                                CouponService.UpdateCouponAvailability(coupons[0].id, false).then((response) => {
+                                                    let usedCoupon: any = response.data;
                                                     
                                                     if(usedCoupon.isAvailable) {
                                                         SetCoupon(usedCoupon);
@@ -145,13 +149,15 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                         }
                         data={detailedCart}
                         renderItem={({ item }) => {
-                            let SetCart, SetCartLength;
+                            let SetCart, SetCartLength: any;
 
                             if(route.params) {
                                 SetCart = route.params.callableSetCart;
                                 SetCartLength = route.params.callableSetCartLength;
                             }
                             
+                            
+
                             return(
                                 <CartItemCard 
                                     item={item} callableSetCart={SetCart} 
@@ -160,7 +166,13 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                                     cartLength={route.params ? route.params.cartLength : 0} 
                                     callableSetDetailedCart={SetDetailedCart} 
                                     detailedCart={detailedCart}
-                                    callableGetTotalItems={GetTotalItems}
+                                    callableGetTotalItems={() => {
+                                        GetTotalItems();
+                                        console.log(detailedCart.length);
+                                        // if(detailedCart.length == 1) {
+                                            route.params?.callableSetCartLength(route.params?.cartLength);
+                                        // }
+                                    }}
                                     callableSetTotalItems={SetTotalItems}
                                     callableGetTotalPrice={GetTotalPrice}
                                     callableSetTotalPrice={SetTotalPrice}

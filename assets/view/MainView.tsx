@@ -16,7 +16,6 @@ import CartProduct from '../model/CartProduct';
 
 import { ProductService }  from '../service/ProductService';
 
-
 interface Props {
     navigation: StackNavigationProp<any, any>
 }
@@ -33,12 +32,15 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     useFocusEffect(useCallback(() => { 
         SetProductsList([]);
 
-        ProductService.GetProducts().then((products) => {
+        ProductService.GetProducts().then((response) => {
+            let products: any = response.data;
+
             SetProductsList(products);
             SetSearchableList(products);
         });
     
-        ProductService.GetCategories().then(categories => {
+        ProductService.GetCategories().then(response => {
+            let categories: any = response.data;
             SetCategoriesList(["all", ...categories]);
         });
     }, []));

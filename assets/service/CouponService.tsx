@@ -2,14 +2,12 @@ const url: RequestInfo = "https://6206a65992dd6600171c0ba5.mockapi.io/bestdot/v1
 
 export const CouponService = {
     GetCouponByHash: async function(hash: string) {
-        let init: RequestInit = {
-            method: 'GET'
-        }
+        let init: RequestInit = { method: 'GET' }
 
-        const request = await fetch(`${url}/coupons?hash=${hash}&isAvailable=${true}`, init);
-        const response = await request.json();
+        const response: Response = await fetch(`${url}/coupons?hash=${hash}&isAvailable=${true}`, init);
+        const data: JSON = await response.json();
 
-        return response;  
+        return ({data, status: response.status}); 
     },
     UpdateCouponAvailability: async function(id: number, availability: boolean) {
         let init: RequestInit = {
@@ -22,9 +20,9 @@ export const CouponService = {
             })
         }
 
-        const request = await fetch(`${url}/coupons/${id}`, init);
-        const response = await request.json();
+        const response: Response = await fetch(`${url}/coupons/${id}`, init);
+        const data: JSON = await response.json();
 
-        return response; 
+        return ({data, status: response.status});  
     }
 }

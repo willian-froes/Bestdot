@@ -5,10 +5,13 @@ interface Props {
     isMain: boolean,
     cartLength?: number,
     callableGoTo: CallableFunction
-    children?: ReactNode
+    children?: ReactNode,
+    title: string
 }
     
-const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children }) => {
+const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children, title }) => {
+    let splitedTitle = title.split(" ");
+
     return(
         <>
             {isMain
@@ -36,8 +39,8 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                                 <Image style={{ width: 25, height: 25, marginRight: 20, marginLeft: 30, marginVertical: 22 }} source={require("../image/return-icon.png")} />
                             </TouchableOpacity>
 
-                            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#000000' }}>Your </Text>
-                            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#FF5A4D' }}>bests</Text>
+                            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#000000' }}>{splitedTitle[0]} </Text>
+                            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#FF5A4D' }}>{splitedTitle[1]}</Text>
                         </View>
                     }
                 </View>
