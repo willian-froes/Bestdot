@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Image } from 'react-native';
 
 import InputWithButton from '../component/InputWithButton';
 import CartItemCard from '../component/CartItemCard';
@@ -17,6 +17,7 @@ import { CouponService }  from '../service/CouponService';
 import CartProduct from '../model/CartProduct';
 import CartItem from '../model/CartItem';
 import Coupon from '../model/Coupon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: StackNavigationProp<any, any>,
@@ -48,6 +49,17 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
         }
     }
 
+    const GetCachedCoupon = async () => {
+        let data: any = await AsyncStorage.getItem("coupon");
+        if(data) {
+            let coupon = JSON.parse(data);
+            SetCouponText(coupon.hash);
+
+            SetModalIsVisible(true);
+            SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
+        }
+    }
+
     useEffect(() => {
         const cart: CartProduct[] = route.params ? route.params.cart : [];
 
@@ -72,11 +84,27 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
         }
         
         GetTotalItems();
+        GetCachedCoupon();
     }, []);
+
+    const [modalIsVisible, SetModalIsVisible] = useState(false);
+    const [modalMessage, SetModalMessage] = useState("");
 
     return (
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
+
+            {modalIsVisible
+                ?
+                <View style={{ position: 'absolute', zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.6)' , width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ backgroundColor: '#ffffff', width: '70%', borderRadius: 15, paddingTop: 20 }}>
+                        <Text style={{ fontWeight: 'bold', color: '#000000', fontSize: 16, marginHorizontal: 10, textAlign: 'center', marginBottom: 10 }}>{modalMessage}</Text>
+                        <LargeButton title='Ok!' method={() => { SetModalIsVisible(false); SetModalMessage(""); }} />
+                    </View>
+                </View>
+                :
+                <></>
+            }
 
             <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Your bests" >
                 {cartSize == 0
@@ -126,15 +154,11 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                                             if(coupons.length > 0 && coupons[0].isAvailable) {
                                                 CouponService.UpdateCouponAvailability(coupons[0].id, false).then((response) => {
                                                     let usedCoupon: any = response.data;
-                                                    
-                                                    if(usedCoupon.isAvailable) {
-                                                        SetCoupon(usedCoupon);
-                                                    } else {
-                                                        console.log("Oops... fail to use this coupon, try it again");
-                                                    }
+                                                    SetCoupon(usedCoupon);
                                                 });
                                             } else {
-                                                console.log("Sorry... this coupon invalid or not found");
+                                                SetModalIsVisible(true);
+                                                SetModalMessage("Sorry... this coupon invalid or not found");
                                             }
                                         });
                                     }}
@@ -169,10 +193,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                                     detailedCart={detailedCart}
                                     callableGetTotalItems={() => {
                                         GetTotalItems();
-                                        console.log(detailedCart.length);
-                                        // if(detailedCart.length == 1) {
-                                            route.params?.callableSetCartLength(route.params?.cartLength);
-                                        // }
+                                        route.params?.callableSetCartLength(route.params?.cartLength);
                                     }}
                                     callableSetTotalItems={SetTotalItems}
                                     callableGetTotalPrice={GetTotalPrice}

@@ -29,10 +29,10 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
     const [loading, SetLoading] = useState(false);
     const [couponIsCopied, SetCouponIsCopied] = useState(false);
 
-    let minimunPoints = 3;
+    let minimunPoints = 5;
 
     useEffect(() => {
-        SetIsRunning(true);
+        SetIsRunning(false);
         LoadScore();
     }, []);
 
@@ -72,9 +72,25 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
         }
     }
 
+    const [modalIsVisible, SetModalIsVisible] = useState(true);
+    const [modalMessage, SetModalMessage] = useState("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
+
     return(
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
+
+            {modalIsVisible
+                ?
+                <View style={{ position: 'absolute', zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.6)' , width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ backgroundColor: '#ffffff', width: '70%', borderRadius: 15, paddingTop: 20 }}>
+                        <Text style={{ fontWeight: 'bold', color: '#000000', fontSize: 16, marginHorizontal: 10, textAlign: 'center', marginBottom: 10 }}>{modalMessage}</Text>
+                        <LargeButton title="Ok, let's go!" method={() => { SetModalIsVisible(false); SetModalMessage(""); SetIsRunning(true); }} />
+                    </View>
+                </View>
+                :
+                <></>
+            }
+
             <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Flappy dot">
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <MatchInfoLabel value={currentPoints.toString()} description={`point${currentPoints == 1 ? '' : 's'}`} />
@@ -97,7 +113,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                 </View>
             </Navbar>
 
-            {isRunning
+            {isRunning || modalIsVisible
                 ?
                 <GameEngine
                     ref={(ref) => SetGameEngine(ref)}

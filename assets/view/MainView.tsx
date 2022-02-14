@@ -3,7 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useCallback, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 
 import ProductCard from '../component/ProductCard';
 import InputWithButton from '../component/InputWithButton';
@@ -85,6 +85,15 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("../image/banner-sales-image.png")} />
                             </View>
 
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FF6E63', borderRadius: 15, marginBottom: 10 }}>
+                                <Text style={{ fontWeight: 'bold', color: '#ffffff', fontSize: 18, marginHorizontal: 15, marginVertical: 10 }} numberOfLines={2}>You want to get {"\n"}coupons up to 15%?</Text>
+                                <TouchableOpacity style={{ backgroundColor: '#ffffff', borderColor: '#B5B5B5', borderWidth: 1, justifyContent: 'center', borderTopRightRadius: 15, borderBottomRightRadius: 15, paddingHorizontal: 20 }} onPress={() => {
+                                    navigation.navigate("Minigame")
+                                }}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 19, color: '#F0AD4E' }}>PLAY NOW!</Text>
+                                </TouchableOpacity>
+                            </View>
+
                             <View style={{ marginHorizontal: 5 }}>
                                 <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
                                 <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
@@ -96,8 +105,9 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item }) => {
+                                    let isSelected = item === "all";
                                     return(
-                                        <CategoryButton categoryName={item} selected={false} />
+                                        <CategoryButton categoryName={item} selected={isSelected} />
                                     );
                                 }}
                                 keyExtractor={(item, index) => index.toString()}
