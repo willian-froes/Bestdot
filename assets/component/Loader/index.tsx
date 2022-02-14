@@ -1,16 +1,16 @@
-import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
+import style from './style';
 
 interface Props {
     description: string
 }
     
-const Loader: React.FC<Props> = ({ description }) => {
+const Loader: React.FC<Props> = ({ description }: Props) => {
     return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={style.loaderLabel}>
             <View>
                 <ActivityIndicator size="large" color="#FF6E63" />
-                <Text style={{ color: '#B5B5B5', fontWeight: 'bold', marginTop: 20 }}>{description}</Text>
+                <Text style={style.description}>{description}</Text>
             </View>
         </View>
     );

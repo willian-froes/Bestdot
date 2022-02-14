@@ -5,16 +5,17 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 
-import ProductCard from '../component/ProductCard';
-import InputWithButton from '../component/InputWithButton';
-import CategoryButton from '../component/CategoryButton';
-import Navbar from '../component/Navbar';
-import Loader from '../component/Loader';
+import ProductCard from '../../component/ProductCard';
+import InputWithButton from '../../component/InputWithButton';
+import CategoryButton from '../../component/CategoryButton';
+import Navbar from '../../component/Navbar';
+import Loader from '../../component/Loader';
 
-import Product from '../model/Product';
-import CartProduct from '../model/CartProduct';
+import Product from '../../model/Product';
+import CartProduct from '../../model/CartProduct';
 
-import { ProductService }  from '../service/ProductService';
+import { ProductService }  from '../../service/ProductService';
+import style from './style';
 
 interface Props {
     navigation: StackNavigationProp<any, any>
@@ -46,7 +47,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     }, []));
 
     return (
-        <View style={styles.container}>
+        <View style={style.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
             <Navbar title="" isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
@@ -81,26 +82,24 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                 <FlatList<Product>
                     ListHeaderComponent={
                         <>
-                            <View style={{ width: '100%', height: 145, marginVertical: 10 }}>
-                                <Image style={{ flex: 1, resizeMode: 'contain', height: undefined, width: undefined }} source={require("../image/banner-sales-image.png")} />
+                            <View style={style.salesBannerContainer}>
+                                <Image style={style.salesBanner} source={require("../image/banner-sales-image.png")} />
                             </View>
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FF6E63', borderRadius: 15, marginBottom: 10 }}>
-                                <Text style={{ fontWeight: 'bold', color: '#ffffff', fontSize: 18, marginHorizontal: 15, marginVertical: 10 }} numberOfLines={2}>You want to get {"\n"}coupons up to 15%?</Text>
-                                <TouchableOpacity style={{ backgroundColor: '#ffffff', borderColor: '#B5B5B5', borderWidth: 1, justifyContent: 'center', borderTopRightRadius: 15, borderBottomRightRadius: 15, paddingHorizontal: 20 }} onPress={() => {
-                                    navigation.navigate("Minigame")
-                                }}>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 19, color: '#F0AD4E' }}>PLAY NOW!</Text>
+                            <View style={style.minigameAccessLabel}>
+                                <Text style={style.minigameAccessDescription} numberOfLines={2}>You want to get {"\n"}coupons up to 15%?</Text>
+                                <TouchableOpacity style={style.minigameAccessButton} onPress={() => navigation.navigate("Minigame")}>
+                                    <Text style={style.minigameAccessButtonText}>PLAY NOW!</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            <View style={{ marginHorizontal: 5 }}>
-                                <Text style={{ color: '#000000', fontSize: 26, fontWeight: 'bold' }}>Choose best for you</Text>
-                                <Text style={{ color: '#B5B5B5', fontWeight: 'bold' }}>+{productsList.length-1} products here!</Text>
+                            <View style={style.productListTitleContainer}>
+                                <Text style={style.productListTitle}>Choose best for you</Text>
+                                <Text style={style.productListCount}>+{productsList.length-1} products here!</Text>
                             </View>
 
                             <FlatList<string>
-                                style={{ height: 40, marginBottom: 20, marginTop: 15 }}
+                                style={style.categoriesListContainer}
                                 data={categoriesList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
@@ -115,7 +114,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                             />
                         </>
                     }
-                    style={{ paddingHorizontal: 5}}
+                    style={style.productListContainer}
                     data={productsList}
                     renderItem={({ item }) => {
                         let boughtItems = cart.filter((cartItem) => {
@@ -151,12 +150,5 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff'
-    }
-});
 
 export default MainView;
