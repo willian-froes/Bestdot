@@ -118,11 +118,11 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                         <Text style={style.orderProgressText}>Done order in 3 steps</Text>
 
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
-                            <OrderStepIndicator selected={true} icon={require("../image/cart-white-icon.png")} />
+                            <OrderStepIndicator selected={true} icon={require("../../image/cart-white-icon.png")} />
                             <Line />
-                            <OrderStepIndicator selected={false} icon={require("../image/location-icon.png")} />
+                            <OrderStepIndicator selected={false} icon={require("../../image/location-icon.png")} />
                             <Line />
-                            <OrderStepIndicator selected={false} icon={require("../image/payment-icon.png")} />
+                            <OrderStepIndicator selected={false} icon={require("../../image/payment-icon.png")} />
                         </View>
 
                         <Text style={style.orderProgressText}>First, check your items here!</Text>
@@ -159,7 +159,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                                         SetCouponText("");
                                     }}
                                     inputPlaceholder={"Have coupon? Insert here!"}
-                                    buttonIcon={require("../image/check-coupon-icon.png")}
+                                    buttonIcon={require("../../image/check-coupon-icon.png")}
                                     callableSetter={SetCouponText}
                                     value={couponText}
                                 />
@@ -200,14 +200,14 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                     <View>
                         <View style={{ width: '100%', height: 3, backgroundColor: '#FF5A4D', marginBottom: 10 }}/>
 
-                        <OrderValueItem description={`Products (${totalItems} item${totalItems > 0 ? 's' : ''}):`} value={`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`} />
+                        <OrderValueItem description={`Products (${totalItems} item${totalItems > 0 ? 's' : ''}):`} value={`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
                         {coupon
                             ?
-                            <OrderValueItem description={`Coupon ${coupon?.hash} discount:`} value={`-$ ${(Math.round((totalPrice * coupon?.discount) * 100) / 100).toFixed(2)}`} />
+                            <OrderValueItem description={`Coupon ${coupon?.hash} discount:`} value={`-$ ${(Math.round((totalPrice * coupon?.discount) * 100) / 100).toFixed(2)}`} valueTextColor="#EC2B2B" />
                             :
                             <></>
                         }
-                        <OrderValueItem description={"Subtotal:"} value={`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`} />
+                        <OrderValueItem description={"Subtotal:"} value={`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
                         
                         <LargeButton title="Check and confirm receiving address" method={() => {}}/>
                     </View>

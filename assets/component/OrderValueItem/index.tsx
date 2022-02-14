@@ -13,14 +13,15 @@ import style from './style';
 
 interface Props {
     description: string,
-    value: string
+    value: string,
+    valueTextColor: string
 }
     
-const OrderValueItem: React.FC<Props> = ({ description, value }) => {
+const OrderValueItem: React.FC<Props> = ({ description, value, valueTextColor }) => {
     return(
         <View style={style.orderLabel}>
             <Text style={style.orderDescription}>{description}</Text>
-            <Text style={style.orderValue}>{value}</Text>
+            <Text style={[style.orderValue, { color: valueTextColor }]}>{value}</Text>
         </View>
     );
 }

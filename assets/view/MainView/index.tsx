@@ -67,7 +67,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                             SetSearchText("");
                         }}
                         inputPlaceholder={"Find the best for you!"}
-                        buttonIcon={require("../image/search-icon.png")}
+                        buttonIcon={require("../../image/search-icon.png")}
                         callableSetter={SetSearchText}
                         value={searchText}
                     />
@@ -83,7 +83,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     ListHeaderComponent={
                         <>
                             <View style={style.salesBannerContainer}>
-                                <Image style={style.salesBanner} source={require("../image/banner-sales-image.png")} />
+                                <Image style={style.salesBanner} source={require("../../image/banner-sales-image.png")} />
                             </View>
 
                             <View style={style.minigameAccessLabel}>

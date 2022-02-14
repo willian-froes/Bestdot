@@ -4,12 +4,13 @@ import style from './style';
 
 interface Props {
     icon: any,
-    method: CallableFunction
+    method: CallableFunction,
+    isDefault: boolean
 }
     
-const SmallSquareButton: React.FC<Props> = ({ icon, method }) => {
+const SmallSquareButton: React.FC<Props> = ({ icon, method, isDefault }) => {
     return(
-        <TouchableOpacity style={style.button} onPress={() => method()}>
+        <TouchableOpacity style={[style.button, { backgroundColor: isDefault ? '#FF6E63' : '#ffffff', borderColor: isDefault ? '#FF6E63' : '#B5B5B5' }]} onPress={() => method()}>
             <Image style={style.icon} source={icon} />
         </TouchableOpacity>
     );

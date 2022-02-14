@@ -12,8 +12,7 @@ const style = StyleSheet.create({
         fontWeight: 'bold', 
         fontSize: 16 
     },
-    orderValue: { 
-        color: '#00C851', 
+    orderValue: {
         fontWeight: 'bold', 
         fontSize: 16 
     }

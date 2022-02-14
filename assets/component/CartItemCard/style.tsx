@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const style = StyleSheet.create({
+const style= StyleSheet.create({
     cartItemCard: { 
         flexDirection: 'row', 
         marginBottom: 10, 

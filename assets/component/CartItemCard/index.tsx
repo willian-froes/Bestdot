@@ -65,7 +65,7 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                     callableSetTotalPrice(totalPrice-(item.quantity ? item.price*item.quantity : item.price));
                     callableGetTotalItems(totalItems-(item.quantity ? item.quantity : 1));
                 }}>
-                    <Image style={style.removeIcon} source={require("../image/remove-icon.png")}/>
+                    <Image style={style.removeIcon} source={require("../../image/remove-icon.png")}/>
                 </TouchableOpacity>
                 <View style={style.removeButtonAuxLabel}></View>
             </View>
@@ -87,9 +87,9 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                             <Text style={style.itemPriceIndicator}>/item</Text>
                         </View>
                         <View style={style.itemQuantityLabel}>
-                            <SmallSquareButton icon={require("../image/decrement-icon.png")} method={() => SetQuantity(false)} />
+                            <SmallSquareButton icon={require("../../image/decrement-icon.png")} method={() => SetQuantity(false)} isDefault={false} />
                             <Text style={style.itemQuantity}>{itemQuantity}</Text>
-                            <SmallSquareButton icon={require("../image/increment-icon.png")} method={() => SetQuantity(true)} />
+                            <SmallSquareButton icon={require("../../image/increment-icon.png")} method={() => SetQuantity(true)} isDefault={true} />
                         </View>
                     </View>
                 </View>

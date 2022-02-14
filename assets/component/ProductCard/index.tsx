@@ -38,14 +38,14 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                             callableRemoveMethod();
                             SetHasInTheCart(false);
                         }}>
-                            <Image style={style.removeButtonIcon} source={require("../image/remove-item-icon.png")} />
+                            <Image style={style.removeButtonIcon} source={require("../../image/remove-item-icon.png")} />
                         </TouchableOpacity>
                         :
                         <TouchableOpacity style={style.addInCartButton} onPress={() => {
                             callableAddMethod();
                             SetHasInTheCart(true);
                         }}>
-                            <Image style={style.addInCartButtonIcon} source={require("../image/cart-white-icon.png")} />
+                            <Image style={style.addInCartButtonIcon} source={require("../../image/cart-white-icon.png")} />
                         </TouchableOpacity>
                     }
                 </View>

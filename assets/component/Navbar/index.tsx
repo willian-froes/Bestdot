@@ -37,7 +37,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                         :
                         <View style={style.secundaryPageTitle}>
                             <TouchableOpacity style={style.returnButton} onPress={() => callableGoTo()}>
-                                <Image style={style.returnButtonText} source={require("../image/return-icon.png")} />
+                                <Image style={style.returnButtonText} source={require("../../image/return-icon.png")} />
                             </TouchableOpacity>
 
                             <Text style={style.titleBlackText}>{splitedTitle[0]} </Text>
@@ -52,13 +52,13 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                         ?
                         <TouchableOpacity style={style.cartButton} onPress={() => callableGoTo()}>
                             <Text style={style.cartSize}>{cartLength}</Text>
-                            <Image style={style.cartIcon} source={require("../image/cart-white-icon.png")} />
+                            <Image style={style.cartIcon} source={require("../../image/cart-white-icon.png")} />
                         </TouchableOpacity>
                         :
                         <></>
                     }
 
-                    <Image style={[style.userImage, { marginTop: isMain ? 0 : 15, marginRight: isMain ? 0 : 10 }]} source={require("../image/user-temp-image.jpg")} />
+                    <Image style={[style.userImage, { marginTop: isMain ? 0 : 15, marginRight: isMain ? 0 : 10 }]} source={require("../../image/user-temp-image.jpg")} />
                 </View>
             </View>
 

@@ -99,7 +99,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                     {currentPoints >= minimunPoints && !isRunning
                         ?
                         <>
-                            <Image style={{ width: 20, height: 20, alignSelf: 'center' }} source={require("../image/equals-icon.png")} />
+                            <Image style={{ width: 20, height: 20, alignSelf: 'center' }} source={require("../../image/equals-icon.png")} />
                             <MatchInfoLabel value={`${(Math.round((currentPoints + (currentPoints / 2)) * 100) / 100).toFixed(1)} %`} description="chance" />
                         </>
                         :
@@ -146,7 +146,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                                 <>
                                     <View />
                 
-                                    <Image style={style.dotStateImage} source={currentPoints >= minimunPoints ? require("../image/coupon-dot-image.png") : require("../image/dot-cry-image.png")} />
+                                    <Image style={style.dotStateImage} source={currentPoints >= minimunPoints ? require("../../image/coupon-dot-image.png") : require("../../image/dot-cry-image.png")} />
                 
                                     <View style={style.feedbackLabel}>
                                         <Text style={style.feedbackTitle}>Ooops...</Text>
@@ -186,7 +186,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                                     <>
                                         <View />
                     
-                                        <Image style={style.dotStateImage} source={require("../image/dot-cry-image.png")} />
+                                        <Image style={style.dotStateImage} source={require("../../image/dot-cry-image.png")} />
                     
                                         <View style={style.feedbackLabel}>
                                             <Text style={style.feedbackTitle}>Buaa...</Text>

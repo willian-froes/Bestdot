@@ -18,7 +18,7 @@ const InputWithButton: React.FC<Props> = ({ callableMethod, callableCancelMethod
             {value != "" && value != null
                 ?
                 <TouchableOpacity style={style.cancelButton} onPress={() => callableCancelMethod()}>
-                    <Image style={style.canelButtonIcon} source={require("../image/close-gray-icon.png")} />
+                    <Image style={style.canelButtonIcon} source={require("../../image/close-gray-icon.png")} />
                 </TouchableOpacity>
                 :
                 <></>
