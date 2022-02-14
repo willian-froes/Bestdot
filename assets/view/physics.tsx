@@ -15,7 +15,7 @@ const Physics = (entities: any, {touches, time, dispatch}: any) => {
         Body.setVelocity(entities.Bird.body, {
             x: 0,
             y: -8
-        })
+        });
     })
     
     

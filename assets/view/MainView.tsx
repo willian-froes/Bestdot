@@ -49,7 +49,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
+            <Navbar title="" isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
                 {productsList.length == 0 || categoriesList.length == 0
                     ?
                     <></>

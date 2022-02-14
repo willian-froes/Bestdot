@@ -14,8 +14,8 @@ export default function App() {
     return(
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-                {/* <Stack.Screen name="Main" component={MainView} />
-                <Stack.Screen name="Order" component={OrderView} /> */}
+                <Stack.Screen name="Main" component={MainView} />
+                <Stack.Screen name="Order" component={OrderView} />
                 <Stack.Screen name="Minigame" component={MinigameView} />
             </Stack.Navigator>
         </NavigationContainer>
