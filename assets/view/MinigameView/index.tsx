@@ -8,14 +8,14 @@ import LargeButton from '../../component/LargeButton';
 import ScoreLabel from '../../component/ScoreLabel';
 
 import { GameEngine } from 'react-native-game-engine';
-import entities from '../entities';
-import Physics from '../physics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MatchInfoLabel from '../../component/MatchInfoLabel';
 import { CouponService } from '../../service/CouponService';
 import Loader from '../../component/Loader';
 import Modal from '../../component/Modal';
 import style from './style';
+
+import { MinigameController } from '../../controller/MinigameController';
 
 interface Props {
     navigation: StackNavigationProp<any, any>
@@ -118,8 +118,8 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                 <GameEngine
                     ref={(ref) => SetGameEngine(ref)}
                     style={style.minigameScene}
-                    systems={[Physics]}
-                    entities={entities()}
+                    systems={[MinigameController.ActivePhysics]}
+                    entities={MinigameController.Restart()}
                     running={isRunning}
                     onEvent={(e: any) => {
                         switch(e.type) {

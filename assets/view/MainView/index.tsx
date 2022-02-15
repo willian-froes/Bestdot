@@ -3,7 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useCallback, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
 
 import ProductCard from '../../component/ProductCard';
 import InputWithButton from '../../component/InputWithButton';
@@ -11,10 +11,11 @@ import CategoryButton from '../../component/CategoryButton';
 import Navbar from '../../component/Navbar';
 import Loader from '../../component/Loader';
 
+import { ProductController } from '../../controller/ProductController';
+
 import Product from '../../model/Product';
 import CartProduct from '../../model/CartProduct';
 
-import { ProductService }  from '../../service/ProductService';
 import style from './style';
 
 interface Props {
@@ -23,49 +24,32 @@ interface Props {
 
 const MainView: React.FC<Props> = ({ navigation }) => {
     const [productsList, SetProductsList] = useState<Product[]>([]);
-    const [searchableList, SetSearchableList] = useState<Product[]>([]);
-    const [searchText, SetSearchText] = useState<string>("");
     const [categoriesList, SetCategoriesList] = useState<string[]>([]);
 
+    const [searchableList, SetSearchableList] = useState<Product[]>([]);
+    const [searchText, SetSearchText] = useState<string>("");
+
     const [cart, SetCart] = useState<CartProduct[]>([]);
-    const [cartLength, SetCartLength] = useState<number>(0); 
+
+    const [isLoading, SetIsLoading] = useState<boolean>(false);
 
     useFocusEffect(useCallback(() => { 
-        SetProductsList([]);
-
-        ProductService.GetProducts().then((response) => {
-            let products: any = response.data;
-
-            SetProductsList(products);
-            SetSearchableList(products);
-        });
-    
-        ProductService.GetCategories().then(response => {
-            let categories: any = response.data;
-            SetCategoriesList(["all", ...categories]);
-        });
+        SetIsLoading(true);
+        ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
     }, []));
 
     return (
         <View style={style.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar title="" isMain={true} cartLength={cartLength} callableGoTo={() => navigation.navigate("Order", { cart, cartLength, callableSetCart: SetCart, callableSetCartLength: SetCartLength })}>
+            <Navbar title="" isMain={true} cartLength={cart.length} callableGoTo={() => navigation.navigate("Order")}>
                 {productsList.length == 0 || categoriesList.length == 0
                     ?
                     <></>
                     :
-                    <InputWithButton callableMethod={() => {
-                            let filteredProducts = searchableList.filter((product) => {
-                                return product.title.toLowerCase().includes(searchText.toLowerCase());
-                            });
-
-                            SetProductsList(filteredProducts);
-                        }}
-                        callableCancelMethod={()=> {
-                            SetProductsList(productsList);
-                            SetSearchText("");
-                        }}
+                    <InputWithButton 
+                        callableMethod={() => { ProductController.FilterProductsByText(searchableList, searchText, SetProductsList); }}
+                        callableCancelMethod={()=> { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText) }}
                         inputPlaceholder={"Find the best for you!"}
                         buttonIcon={require("../../image/search-icon.png")}
                         callableSetter={SetSearchText}
@@ -75,7 +59,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                 
             </Navbar>
 
-            {productsList.length == 0 || categoriesList.length == 0
+            {isLoading
                 ?
                 <Loader description="Wait, we get the bests for you!" />
                 :
@@ -103,12 +87,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 data={categoriesList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({ item }) => {
-                                    let isSelected = item === "all";
-                                    return(
-                                        <CategoryButton categoryName={item} selected={isSelected} />
-                                    );
-                                }}
+                                renderItem={({ item }) => <CategoryButton categoryName={item} selected={item === "all"} /> }
                                 keyExtractor={(item, index) => index.toString()}
                                 numColumns={1}
                             />
@@ -117,29 +96,12 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     style={style.productListContainer}
                     data={productsList}
                     renderItem={({ item }) => {
-                        let boughtItems = cart.filter((cartItem) => {
-                            return cartItem.productId == item.id
-                        });
-
-                        item.isBought = boughtItems != undefined && boughtItems.length > 0;
+                        item.isBought = ProductController.CheckProductIsBought(cart, item);
                         
                         return(
                             <ProductCard product={item} 
-                                callableAddMethod={() => {
-                                    SetCart([{ productId: item.id, quantity: 1 }, ...cart]);
-
-                                    let length = cartLength+1;
-                                    SetCartLength(length);
-                                }}
-
-                                callableRemoveMethod={() => {
-                                    const index = cart.map(product => product.productId).indexOf(item.id);
-                                    cart.splice(index, 1);
-                                    SetCart(cart);
-
-                                    let length = cartLength-1;
-                                    SetCartLength(length);
-                                }}
+                                callableAddMethod={() => ProductController.InsertProductInCart(cart, item, SetCart)}
+                                callableRemoveMethod={() => ProductController.RemoveProductFromCart(cart, item, SetCart)}
                             />
                         );
                     }}
