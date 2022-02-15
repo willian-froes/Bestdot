@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Body, Engine, Events, World } from 'matter-js';
 import { Dimensions } from 'react-native';
 
@@ -79,6 +80,49 @@ export const MinigameController = {
             ObstacleBottom1:  GameObjectHelper.CreateGameObject(world, 'ObstacleBottom1', '#FF5A4D', pipeSizePosA.pipeBottom.pos, pipeSizePosA.pipeBottom.size, true),
             ObstacleTop2:  GameObjectHelper.CreateGameObject(world, 'ObstacleTop2', '#FF5A4D', pipeSizePosB.pipeTop.pos, pipeSizePosB.pipeTop.size, true),
             ObstacleBottom2:  GameObjectHelper.CreateGameObject(world, 'ObstacleBottom2', '#FF5A4D', pipeSizePosB.pipeBottom.pos, pipeSizePosB.pipeBottom.size, true)
+        }
+    },
+    LoadScore: async function(SetScore: CallableFunction) {
+        let data: any = await AsyncStorage.getItem("score");
+
+        if(data) {
+            let score: any = JSON.parse(data);
+            SetScore(score);
+        } else {
+            SetScore({ last: 0, best: 0 });
+        }
+    },
+    SaveScore: async function(currentPoints: number, SetScore: CallableFunction) {
+        let data: any = await AsyncStorage.getItem("score");
+
+        if(data) { 
+            let score: any = JSON.parse(data);
+            let bestPoints = score.best < currentPoints ? currentPoints : score.best;
+            let newScore = { last: currentPoints, best: bestPoints };
+
+            SetScore(newScore);
+
+            let newScoreString = JSON.stringify(newScore);
+            AsyncStorage.setItem("score", newScoreString)
+        }
+    },
+    SetGameState: function(e: any, gameEngine: any, SetIsRunning: CallableFunction, SetCurrentPoints: CallableFunction, currentPoints: number) {
+        switch(e.type) {
+            case 'game_over':
+                SetIsRunning(false);
+                gameEngine.stop();
+                break;
+            case 'new_point':
+                let points = currentPoints + 1;
+                SetCurrentPoints(points);
+                break;
+        }
+    },
+    SaveCoupon: function(gettedCoupon: any, couponIsCopied: boolean, SetCouponIsCopied: CallableFunction) {
+        if(couponIsCopied == false) {
+            SetCouponIsCopied(true);
+            let couponString = JSON.stringify(gettedCoupon.coupon);
+            AsyncStorage.setItem("coupon", couponString);
         }
     }
 }

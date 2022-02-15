@@ -1,21 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { GameEngine } from 'react-native-game-engine';
 
 import Navbar from '../../component/Navbar';
 import LargeButton from '../../component/LargeButton';
 import ScoreLabel from '../../component/ScoreLabel';
-
-import { GameEngine } from 'react-native-game-engine';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import MatchInfoLabel from '../../component/MatchInfoLabel';
-import { CouponService } from '../../service/CouponService';
 import Loader from '../../component/Loader';
 import Modal from '../../component/Modal';
-import style from './style';
 
+import { CouponService } from '../../service/CouponService';
 import { MinigameController } from '../../controller/MinigameController';
+
+import style from './style';
 
 interface Props {
     navigation: StackNavigationProp<any, any>
@@ -24,12 +23,13 @@ interface Props {
 const MinigameView: React.FC<Props> = ({ navigation }) => {
     const [isRunning, SetIsRunning] = useState<boolean>(false);
     const [gameEngine, SetGameEngine] = useState<any>(null);
+
     const [currentPoints, SetCurrentPoints] = useState<number>(0);
     const [score, SetScore] = useState<any | null>({ last: 0, best: 0 });
     const [gettedCoupon, SetGettedCoupon] = useState<any>({ coupon: null, state: 'to-find' });
 
     const [loading, SetLoading] = useState(false);
-    const [couponIsCopied, SetCouponIsCopied] = useState(false);
+    const [couponIsCopied, SetCouponIsCopied] = useState<boolean>(false);
 
     const [modalIsVisible, SetModalIsVisible] = useState(true);
     const [modalMessage, SetModalMessage] = useState("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
@@ -38,47 +38,21 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
 
     useEffect(() => {
         SetIsRunning(false);
-        LoadScore();
+        MinigameController.LoadScore(SetScore);
     }, []);
 
     const StartGame = (isRestart: boolean) => {
         SetCurrentPoints(0);
         SetIsRunning(true);
-        if (isRestart) SaveScore();
+        if (isRestart) MinigameController.SaveScore(currentPoints, SetScore);
 
         SetGettedCoupon({ coupon: null, state: 'to-find' });
         SetLoading(false);
         SetCouponIsCopied(false);
     }
 
-    const LoadScore = async () => {
-        let data: any = await AsyncStorage.getItem("score");
-
-        if(data) {
-            let score: any = JSON.parse(data);
-            SetScore(score);
-        } else {
-            SetScore({ last: 0, best: 0 });
-        }
-    }
-
-    const SaveScore = async () => {
-        let data: any = await AsyncStorage.getItem("score");
-
-        if(data) { 
-            let score: any = JSON.parse(data);
-            let bestPoints = score.best < currentPoints ? currentPoints : score.best;
-            let newScore = { last: currentPoints, best: bestPoints };
-
-            SetScore(newScore);
-
-            let newScoreString = JSON.stringify(newScore);
-            AsyncStorage.setItem("score", newScoreString)
-        }
-    }
-
     return(
-        <View style={styles.container}>
+        <View style={style.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
             {modalIsVisible
@@ -121,18 +95,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                     systems={[MinigameController.ActivePhysics]}
                     entities={MinigameController.Restart()}
                     running={isRunning}
-                    onEvent={(e: any) => {
-                        switch(e.type) {
-                            case 'game_over':
-                                SetIsRunning(false);
-                                gameEngine.stop();
-                                break;
-                            case 'new_point':
-                                let points = currentPoints + 1;
-                                SetCurrentPoints(points);
-                                break;
-                        }
-                    }}
+                    onEvent={(e: any) => MinigameController.SetGameState(e, gameEngine, SetIsRunning, SetCurrentPoints, currentPoints)}
                 />
                 :
                 <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -168,13 +131,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                                                 <View style={style.couponHashLabel}>
                                                     <Text style={style.couponHashText}>{gettedCoupon.coupon.hash}</Text>
                                                 </View>
-                                                <TouchableOpacity style={style.couponSaveButton} onPress={() => {
-                                                    if(couponIsCopied == false) {
-                                                        SetCouponIsCopied(true);
-                                                        let couponString = JSON.stringify(gettedCoupon.coupon);
-                                                        AsyncStorage.setItem("coupon", couponString);
-                                                    }
-                                                }}>
+                                                <TouchableOpacity style={style.couponSaveButton} onPress={() => MinigameController.SaveCoupon(gettedCoupon, couponIsCopied, SetCouponIsCopied)}>
                                                     <Text style={[style.couponSaveButtonText, { color: couponIsCopied ? '#B5B5B5' : '#FF6E63' }]}>{couponIsCopied ? 'CODE SAVED!' : 'SAVE THIS CODE'}</Text>
                                                 </TouchableOpacity>
                                             </View>
@@ -238,12 +195,5 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff'
-    }
-});
 
 export default MinigameView;

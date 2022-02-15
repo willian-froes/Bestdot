@@ -12,6 +12,7 @@ import Navbar from '../../component/Navbar';
 import Loader from '../../component/Loader';
 
 import { ProductController } from '../../controller/ProductController';
+import { CartController } from '../../controller/CartController';
 
 import Product from '../../model/Product';
 import CartProduct from '../../model/CartProduct';
@@ -30,19 +31,24 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     const [searchText, SetSearchText] = useState<string>("");
 
     const [cart, SetCart] = useState<CartProduct[]>([]);
+    const [cartCount, SetCartCount] = useState<number>(0);
 
     const [isLoading, SetIsLoading] = useState<boolean>(false);
 
     useFocusEffect(useCallback(() => { 
         SetIsLoading(true);
         ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
+        CartController.LoadCart().then(cart => { SetCart(cart); SetCartCount(cart.length) });
     }, []));
 
     return (
         <View style={style.container}>
             <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
 
-            <Navbar title="" isMain={true} cartLength={cart.length} callableGoTo={() => navigation.navigate("Order")}>
+            <Navbar title="" isMain={true} cartLength={cartCount} callableGoTo={() => {
+                CartController.SaveCart(cart);
+                navigation.navigate("Order");
+            }}>
                 {productsList.length == 0 || categoriesList.length == 0
                     ?
                     <></>
@@ -100,8 +106,8 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                         
                         return(
                             <ProductCard product={item} 
-                                callableAddMethod={() => ProductController.InsertProductInCart(cart, item, SetCart)}
-                                callableRemoveMethod={() => ProductController.RemoveProductFromCart(cart, item, SetCart)}
+                                callableAddMethod={() => CartController.InsertProductInCart(cart, item).then(newCart => SetCart(newCart)).then(() => SetCartCount(cart.length))}
+                                callableRemoveMethod={() => CartController.RemoveProductFromCart(cart, item).then(newCart => SetCart(newCart)).then(() => SetCartCount(cart.length))}
                             />
                         );
                     }}

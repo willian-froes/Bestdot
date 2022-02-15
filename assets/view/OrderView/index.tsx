@@ -1,28 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { Text, View, FlatList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Text, View, StyleSheet, FlatList, Image } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 
 import InputWithButton from '../../component/InputWithButton';
 import CartItemCard from '../../component/CartItemCard';
 import Navbar from '../../component/Navbar';
 import Loader from '../../component/Loader';
 import LargeButton from '../../component/LargeButton';
-
-import { RouteProp } from '@react-navigation/native';
-
-import { ProductService }  from '../../service/ProductService';
-import { CouponService }  from '../../service/CouponService';
-
-import CartProduct from '../../model/CartProduct';
-import CartItem from '../../model/CartItem';
-import Coupon from '../../model/Coupon';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import style from './style';
 import Modal from '../../component/Modal';
 import OrderStepIndicator from '../../component/OrderStepIndicator';
 import Line from '../../component/Line/Line';
 import OrderValueItem from '../../component/OrderValueItem';
+
+import { CartController } from '../../controller/CartController';
+
+import CartItem from '../../model/CartItem';
+import Coupon from '../../model/Coupon';
+
+import style from './style';
 
 interface Props {
     navigation: StackNavigationProp<any, any>,
@@ -30,70 +27,28 @@ interface Props {
 }
 
 const MainView: React.FC<Props> = ({ navigation, route }) => {
-    const [couponText, SetCouponText] = useState<string>("");
-
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
-    const [cartSize, SetCartSize] = useState<number>(0);
+
+    const [couponText, SetCouponText] = useState<string>("");
+    const [coupon, SetCoupon] = useState<Coupon | null>();
 
     const [totalItems, SetTotalItems] = useState<any>(0);
     const [totalPrice, SetTotalPrice] = useState<any>(0);
 
-    const [coupon, SetCoupon] = useState<Coupon | null>();
-
-    const GetTotalItems = () => {
-        if(route.params) {
-            let value = route.params.cart.reduce((totalItemsSum: number, { quantity }: { quantity: number}) => quantity ? totalItemsSum + quantity : totalItemsSum, 0);
-            SetTotalItems(value);
-        }
-    }
-
-    const GetTotalPrice = (cart: CartItem[]) => {
-        if(route.params) {
-            let value = cart.reduce((totalPriceSum: number, { quantity, price }) => quantity ? totalPriceSum + (quantity * price) : 0, 0);
-            SetTotalPrice(value);
-        }
-    }
-
-    const GetCachedCoupon = async () => {
-        let data: any = await AsyncStorage.getItem("coupon");
-        if(data) {
-            let coupon = JSON.parse(data);
-            SetCouponText(coupon.hash);
-
-            SetModalIsVisible(true);
-            SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
-        }
-    }
-
-    useEffect(() => {
-        const cart: CartProduct[] = route.params ? route.params.cart : [];
-
-        if(detailedCart?.length == 0) {
-            cart.forEach(async (item)=> {
-                await ProductService.GetProductById(item).then(async (response) => {
-                    let product: any = response.data;
-
-                    detailedCart.push({ 
-                        id: product.id,
-                        image: product.image,
-                        title: product.title,
-                        totalPrice: item.quantity? product.price * item.quantity : product.price,
-                        price: product.price,
-                        quantity: item.quantity 
-                    })
-                    SetDetailedCart(detailedCart);
-                    SetCartSize(cartSize+1);
-                });
-                GetTotalPrice(detailedCart);
-            });
-        }
-        
-        GetTotalItems();
-        GetCachedCoupon();
-    }, []);
-
     const [modalIsVisible, SetModalIsVisible] = useState(false);
     const [modalMessage, SetModalMessage] = useState("");
+
+    useEffect(() => {
+        CartController.GetDetailedCart().then(detailedCart => {
+            SetDetailedCart(detailedCart);
+            CartController.UpdateTotalPrice(detailedCart, totalPrice, SetTotalPrice);
+            CartController.UpdateTotalItems(detailedCart, totalItems, SetTotalItems);
+            CartController.GetCachedCoupon(SetCouponText).then((coupon) => {
+                SetModalIsVisible(true);
+                SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
+            });
+        });
+    }, []);
 
     return (
         <View style={style.container}>
@@ -101,23 +56,20 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
 
             {modalIsVisible
                 ?
-                <Modal description={modalMessage} buttonTitle='Ok!' method={() => {
-                    SetModalIsVisible(false); 
-                    SetModalMessage("");
-                }} />
+                <Modal description={modalMessage} buttonTitle='Ok!' method={() => { SetModalIsVisible(false); SetModalMessage(""); }} />
                 :
                 <></>
             }
 
             <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Your bests" >
-                {cartSize == 0
+                {detailedCart.length == 0
                     ?
                     <></>
                     :
-                    <View style={{ alignItems: 'center' }}>
+                    <View style={style.orderProgressLabel}>
                         <Text style={style.orderProgressText}>Done order in 3 steps</Text>
 
-                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <View style={style.orderProgressDetail}>
                             <OrderStepIndicator selected={true} icon={require("../../image/cart-white-icon.png")} />
                             <Line />
                             <OrderStepIndicator selected={false} icon={require("../../image/location-icon.png")} />
@@ -131,7 +83,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
 
             </Navbar>
 
-            {cartSize == 0
+            {detailedCart.length == 0
                 ?
                 <Loader description="Wait, we get the bests for you!" />
                 :
@@ -140,24 +92,8 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                         ListHeaderComponent={
                             <View style={style.couponInputContainer}>
                                 <InputWithButton 
-                                    callableMethod={() => {
-                                        CouponService.GetCouponByHash(couponText).then((response) => {
-                                            let coupons: any = response.data;
-
-                                            if(coupons.length > 0 && coupons[0].isAvailable) {
-                                                CouponService.UpdateCouponAvailability(coupons[0].id, false).then((response) => {
-                                                    let usedCoupon: any = response.data;
-                                                    SetCoupon(usedCoupon);
-                                                });
-                                            } else {
-                                                SetModalIsVisible(true);
-                                                SetModalMessage("Sorry... this coupon invalid or not found");
-                                            }
-                                        });
-                                    }}
-                                    callableCancelMethod={()=> {
-                                        SetCouponText("");
-                                    }}
+                                    callableMethod={async () => CartController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
+                                    callableCancelMethod={()=> SetCouponText("")}
                                     inputPlaceholder={"Have coupon? Insert here!"}
                                     buttonIcon={require("../../image/check-coupon-icon.png")}
                                     callableSetter={SetCouponText}
@@ -166,31 +102,14 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                             </View>
                         }
                         data={detailedCart}
-                        renderItem={({ item }) => {
-                            let SetCart, SetCartLength: any;
-
-                            if(route.params) {
-                                SetCart = route.params.callableSetCart;
-                                SetCartLength = route.params.callableSetCartLength;
-                            }
-                            
+                        renderItem={({ item }) => {        
                             return(
                                 <CartItemCard 
-                                    item={item} callableSetCart={SetCart} 
-                                    cart={route.params ? route.params.cart : []} 
-                                    callableSetCartLength={SetCartLength} 
-                                    cartLength={route.params ? route.params.cartLength : 0} 
+                                    item={item}
                                     callableSetDetailedCart={SetDetailedCart} 
                                     detailedCart={detailedCart}
-                                    callableGetTotalItems={() => {
-                                        GetTotalItems();
-                                        route.params?.callableSetCartLength(route.params?.cartLength);
-                                    }}
-                                    callableSetTotalItems={SetTotalItems}
-                                    callableGetTotalPrice={GetTotalPrice}
-                                    callableSetTotalPrice={SetTotalPrice}
-                                    totalPrice={totalPrice}
-                                    totalItems={totalItems}
+                                    callableGetTotalItems={() => CartController.UpdateTotalItems(detailedCart, totalItems, SetTotalItems)}
+                                    callableGetTotalPrice={() => CartController.UpdateTotalPrice(detailedCart, totalPrice, SetTotalPrice)}
                                 />
                             );
                         }}
@@ -198,7 +117,7 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
                     />
 
                     <View>
-                        <View style={{ width: '100%', height: 3, backgroundColor: '#FF5A4D', marginBottom: 10 }}/>
+                        <View style={style.footer}/>
 
                         <OrderValueItem description={`Products (${totalItems} item${totalItems > 0 ? 's' : ''}):`} value={`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
                         {coupon

@@ -35,14 +35,5 @@ export const ProductController = {
     CheckProductIsBought: function(cart: CartProduct[], item: Product) {
         let boughtItems = cart.filter((cartItem) => cartItem.productId == item.id);
         return boughtItems != undefined && boughtItems.length > 0;
-    },
-    InsertProductInCart: function(cart: CartProduct[], item: Product, SetCart: CallableFunction) {
-        SetCart([{ productId: item.id, quantity: 1 }, ...cart]);
-    },
-    RemoveProductFromCart: function(cart: CartProduct[], item: Product, SetCart: CallableFunction) {
-        const index = cart.map(product => product.productId).indexOf(item.id);
-
-        cart.splice(index, 1);
-        SetCart(cart);
     }
 }

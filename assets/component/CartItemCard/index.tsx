@@ -1,28 +1,23 @@
 import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
-    
-import CartItem from '../../model/CartItem';
-import CartProduct from '../../model/CartProduct';
+
 import SmallSquareButton from '../SmallSquareButton';
+
+import CartItem from '../../model/CartItem';
+
 import style from './style';
+import { CartController } from '../../controller/CartController';
+import CartProduct from '../../model/CartProduct';
 
 interface Props {
     item: CartItem,
     callableSetDetailedCart: CallableFunction,
     detailedCart: CartItem[],
-    callableSetCart: CallableFunction,
-    cart: CartProduct[],
-    callableSetCartLength: CallableFunction,
-    cartLength: number,
     callableGetTotalItems: CallableFunction,
-    callableSetTotalItems: CallableFunction,
-    callableSetTotalPrice: CallableFunction,
     callableGetTotalPrice: CallableFunction,
-    totalPrice: number,
-    totalItems: number
 }
 
-const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableSetCart, cart, callableSetCartLength, cartLength, callableGetTotalItems, callableSetTotalItems, callableSetTotalPrice, callableGetTotalPrice, totalPrice, totalItems }: Props) => {
+const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableGetTotalItems, callableGetTotalPrice }: Props) => {
     const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
 
     const SetQuantity = (isIncrement: boolean) => {
@@ -32,14 +27,6 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                 SetItemQuantity(item.quantity);
             }
         });
-        
-        cart.filter((cartItem) => {
-            if(item.id == cartItem.productId && cartItem.quantity) {
-                cartItem.quantity = isIncrement ? cartItem.quantity + 1 : itemQuantity > 1 ? cartItem.quantity - 1 : 1;
-            }
-        });
-        
-        callableSetCart(cart);
         callableSetDetailedCart(detailedCart);
 
         callableGetTotalItems();
@@ -49,21 +36,16 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
     return(
         <View style={style.cartItemCard}>
             <View style={style.removeButtonLabel}>
-                <TouchableOpacity style={style.removeButton} onPress={() => {
-                    callableSetCartLength(cartLength-1);
-                    const index = cart.map(product => product.productId).indexOf(item.id);
+                <TouchableOpacity style={style.removeButton} onPress={async () => {
                     let detailedCartAux: CartItem[] = [];
-
-                    cart.splice(index, 1);
                     detailedCart.filter((detailedItem) => {
                         if(detailedItem.id !== item.id) detailedCartAux.push(detailedItem);
                     });
 
-                    callableSetCart(cart);
+                    let cart: CartProduct[] = await CartController.LoadCart();
+                    CartController.RemoveProductFromCart(cart, item);
+                    
                     callableSetDetailedCart(detailedCartAux);
-
-                    callableSetTotalPrice(totalPrice-(item.quantity ? item.price*item.quantity : item.price));
-                    callableGetTotalItems(totalItems-(item.quantity ? item.quantity : 1));
                 }}>
                     <Image style={style.removeIcon} source={require("../../image/remove-icon.png")}/>
                 </TouchableOpacity>
