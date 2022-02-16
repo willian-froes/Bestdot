@@ -9,8 +9,7 @@ const style: StyleProp<any> = StyleSheet.create({
         alignItems: 'center' 
     },
     orderProgressText: { 
-        fontWeight: 'bold', 
-        color: '#000000', 
+        fontWeight: 'bold',  
         fontSize: 16 
     },
     orderProgressDetail: { 

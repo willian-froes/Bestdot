@@ -4,13 +4,30 @@ const style: StyleProp<any> = StyleSheet.create({
     card: { 
         width: '48%', 
         marginHorizontal: 5, 
-        marginBottom: 10 
+        marginBottom: 18 
+    },
+    ratingLabel: { 
+        flexDirection: 'row', 
+        justifyContent: 'flex-end', 
+        alignItems: 'center' 
+    },
+    ratingIcon: { 
+        marginRight: 2 
+    },
+    ratingText: { 
+        fontSize: 12, 
+        color: '#B5B5B5' 
+    },
+    ratingCountText: { 
+        fontSize: 12, 
+        color: '#B5B5B5' 
     },
     productImageLabel: { 
         width: '80%', 
         height: 180, 
         alignSelf: 'center', 
-        marginVertical: 10 
+        marginBottom: 10, 
+        marginTop: 5 
     },
     productImage: { 
         flex: 1, 
@@ -78,19 +95,11 @@ const style: StyleProp<any> = StyleSheet.create({
         borderWidth: 1, 
         borderColor: '#EC2B2B' 
     },
-    removeButtonIcon: { 
-        height: 20, 
-        width: 20 
-    },
     addInCartButton: { 
         backgroundColor: '#FF6E63', 
         paddingHorizontal: 17, 
         paddingVertical: 7, 
         borderRadius: 20 
-    },
-    addInCartButtonIcon: { 
-        height: 18, 
-        width: 18 
     }
 });
 

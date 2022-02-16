@@ -5,15 +5,21 @@ import style from './style';
 
 interface Props {
     categoryName: string,
-    selected: boolean
+    selected: boolean,
+    selectedMethod: CallableFunction,
+    unselectedMethod: CallableFunction
 }
     
-const CategoryButton: React.FC<Props> = ({ categoryName, selected }: Props) => {
-    const [isSelected, SetIsSelected] = useState(selected);
-
+const CategoryButton: React.FC<Props> = ({ categoryName, selected, selectedMethod, unselectedMethod }: Props) => {
     return(
-        <TouchableOpacity style={[style.categoryButton, {backgroundColor: !isSelected ? '#F0F0F0' : '#000000' }]} onPress={(): void => SetIsSelected(!isSelected)}>
-            <Text style={[style.categoryText, { color: !isSelected ? '#B5B5B5' : '#FFFFFF' }]}>{categoryName}</Text>
+        <TouchableOpacity style={[style.categoryButton, {backgroundColor: !selected ? '#F0F0F0' : '#000000' }]} onPress={(): void => {
+            if(categoryName == "all") {
+                unselectedMethod();
+            } else {
+                selectedMethod();
+            }
+        }}>
+            <Text style={[style.categoryText, { color: !selected ? '#B5B5B5' : '#FFFFFF' }]}>{categoryName}</Text>
         </TouchableOpacity>
     );
 }

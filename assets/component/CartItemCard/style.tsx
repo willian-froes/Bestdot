@@ -12,13 +12,9 @@ const style: StyleProp<any> = StyleSheet.create({
     removeButton: { 
         borderWidth: 1, 
         borderColor: '#EC2B2B', 
-        padding: 10, 
+        padding: 5, 
         borderTopLeftRadius: 15, 
         borderBottomRightRadius: 15 
-    },
-    removeIcon: { 
-        width: 10, 
-        height: 10 
     },
     removeButtonAuxLabel: { 
         flexGrow: 1, 

@@ -1,11 +1,13 @@
 import { TextInput, View, Image, TouchableOpacity } from 'react-native';
 import style from './style';
+import { MaterialIcons } from '@expo/vector-icons';
+import { ReactElement } from 'react';
 
 interface Props {
     callableMethod: CallableFunction,
     callableCancelMethod: CallableFunction,
     inputPlaceholder: string,
-    buttonIcon: Object,
+    buttonIcon: ReactElement,
     callableSetter: CallableFunction,
     value: string
 }
@@ -18,14 +20,14 @@ const InputWithButton: React.FC<Props> = ({ callableMethod, callableCancelMethod
             {value != "" && value != null
                 ?
                 <TouchableOpacity style={style.cancelButton} onPress={(): void => callableCancelMethod()}>
-                    <Image style={style.canelButtonIcon} source={require("../../image/close-gray-icon.png")} />
+                    <MaterialIcons name="close" size={20} color="#B5B5B5" />
                 </TouchableOpacity>
                 :
                 <></>
             }
 
             <TouchableOpacity style={style.methodButton} onPress={(): void => callableMethod()}>
-                <Image style={style.methodButtonIcon} source={buttonIcon} />
+                <View style={style.methodButtonIcon}>{buttonIcon}</View>
             </TouchableOpacity>
         </View>
     );

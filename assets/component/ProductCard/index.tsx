@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import Product from '../../model/Product';
 
@@ -16,6 +17,12 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
 
     return(
         <View style={style.card}>
+            <View style={style.ratingLabel}>
+                <MaterialIcons style={style.ratingIcon} name="star" size={24} color="#F0AD4E" />
+                <Text style={style.ratingText}>{product.rating.rate} </Text>
+                <Text style={style.ratingCountText}>({product.rating.count})</Text>
+            </View>
+
             <View style={style.productImageLabel}>
                 <Image style={style.productImage} source={{ uri: product.image }}/>
             </View>
@@ -36,11 +43,11 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                     {hasInTheCart
                         ?
                         <TouchableOpacity style={style.removeButton} onPress={(): void => { callableRemoveMethod(); SetHasInTheCart(false); }}>
-                            <Image style={style.removeButtonIcon} source={require("../../image/remove-item-icon.png")} />
+                            <MaterialIcons name="remove-shopping-cart" size={26} color="#EC2B2B" />
                         </TouchableOpacity>
                         :
                         <TouchableOpacity style={style.addInCartButton} onPress={(): void => { callableAddMethod(); SetHasInTheCart(true); }}>
-                            <Image style={style.addInCartButtonIcon} source={require("../../image/cart-white-icon.png")} />
+                            <MaterialIcons name="shopping-cart" size={24} color="#ffffff" />
                         </TouchableOpacity>
                     }
                 </View>

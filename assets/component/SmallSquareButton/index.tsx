@@ -1,10 +1,10 @@
-import React from 'react';
-import { TouchableOpacity, Image } from 'react-native';
+import React, { ReactElement } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 import style from './style';
 
 interface Props {
-    icon: any,
+    icon: ReactElement,
     method: CallableFunction,
     isDefault: boolean
 }
@@ -12,7 +12,7 @@ interface Props {
 const SmallSquareButton: React.FC<Props> = ({ icon, method, isDefault }: Props) => {
     return(
         <TouchableOpacity style={[style.button, { backgroundColor: isDefault ? '#FF6E63' : '#ffffff', borderColor: isDefault ? '#FF6E63' : '#B5B5B5' }]} onPress={(): void => method()}>
-            <Image style={style.icon} source={icon} />
+            {icon}
         </TouchableOpacity>
     );
 }

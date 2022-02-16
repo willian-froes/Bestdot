@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, View, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { GameEngine } from 'react-native-game-engine';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import Navbar from '../../component/Navbar';
 import LargeButton from '../../component/LargeButton';
@@ -33,7 +34,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
     const [modalIsVisible, SetModalIsVisible] = useState<boolean>(true);
     const [modalMessage, SetModalMessage] = useState<string>("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
 
-    let minimunPoints = 5;
+    const minimunPoints: number = 5;
 
     useEffect((): void => {
         SetIsRunning(false);
@@ -62,8 +63,10 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                     {currentPoints >= minimunPoints && !isRunning
                         ?
                         <>
-                            <Image style={{ width: 20, height: 20, alignSelf: 'center' }} source={require("../../image/equals-icon.png")} />
-                            <MatchInfoLabel value={`${(Math.round((currentPoints + (currentPoints / 2)) * 100) / 100).toFixed(1)} %`} description="chance" />
+                        <View style={style.equalsAlign}>
+                            <MaterialCommunityIcons name="equal" size={32} color="#C4C4C4" />
+                        </View>
+                        <MatchInfoLabel value={`${(Math.round((currentPoints + (currentPoints / 2)) * 100) / 100).toFixed(1)} %`} description="chance" />
                         </>
                         :
                         <View style={style.scoreLabel}>

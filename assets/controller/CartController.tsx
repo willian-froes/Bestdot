@@ -40,26 +40,28 @@ export const CartController: any = {
         
         return newCart;
     },
-    GetDetailedCart: async function(): Promise<CartItem[]> {
+    GetDetailedCart: async function(): Promise<any> {
         const cart: CartProduct[] = await CartController.LoadCart();
         const detailedCart: CartItem[] = [];
+        let itemIndex: number = 0;
 
-        return Promise.all(cart.map(async (item: CartProduct): Promise<void> => {
-            await ProductService.GetProductById(item).then(async (response: any): Promise<void> => {
+        do {
+            await ProductService.GetProductById(cart[itemIndex]).then(async (response: any): Promise<void> => {
                 let product: any = response.data;
 
                 detailedCart.push({ 
                     id: product.id,
                     image: product.image,
                     title: product.title,
-                    totalPrice: item.quantity? product.price * item.quantity : product.price,
+                    totalPrice: cart[itemIndex].quantity || 1 * product.price,
                     price: product.price,
-                    quantity: item.quantity 
+                    quantity: cart[itemIndex].quantity 
                 });
             });
-        })).then(() => { 
-            return detailedCart;
-        });
+            itemIndex += 1;
+        } while(detailedCart.length < cart.length);
+
+        return detailedCart;
     },
     UpdateTotalItems: function(detailedCart: CartItem[], SetTotalItems: CallableFunction): void {
         let value: number = detailedCart.reduce((totalItemsSum: number, { quantity }) => quantity ? totalItemsSum + quantity : totalItemsSum, 0);
@@ -134,3 +136,5 @@ export const CartController: any = {
         await AsyncStorage.setItem("cart", newCartString);
     }
 }
+
+export default CartController;

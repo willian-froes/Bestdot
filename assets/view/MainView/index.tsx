@@ -1,7 +1,8 @@
 import { ReactElement, useCallback, useState } from 'react';
-import { StatusBar, FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StatusBar, FlatList, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 import ProductCard from '../../component/ProductCard';
 import InputWithButton from '../../component/InputWithButton';
@@ -23,7 +24,9 @@ interface Props {
 
 const MainView: React.FC<Props> = ({ navigation }) => {
     const [productsList, SetProductsList] = useState<Product[]>([]);
+
     const [categoriesList, SetCategoriesList] = useState<string[]>([]);
+    const [selectedCategory, SetselectedCategory] = useState<string>("all");
 
     const [searchableList, SetSearchableList] = useState<Product[]>([]);
     const [searchText, SetSearchText] = useState<string>("");
@@ -32,6 +35,9 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     const [cartCount, SetCartCount] = useState<number>(0);
 
     const [isLoading, SetIsLoading] = useState<boolean>(false);
+    const [welcomeState, SetWelcomeState] = useState<boolean>(false);
+
+    let screenInitialPosition: number = Dimensions.get('window').height * 0.3;
 
     useFocusEffect(useCallback((): void => { 
         SetIsLoading(true);
@@ -43,7 +49,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
         <View style={style.container}>
             <StatusBar backgroundColor='#ffffff' barStyle="dark-content"  translucent={false} />
 
-            <Navbar title="" isMain={true} cartLength={cartCount} callableGoTo={(): void => {
+            <Navbar welcomeState={welcomeState} title="" isMain={true} cartLength={cartCount} callableGoTo={(): void => {
                 CartController.SaveCart(cart);
                 navigation?.navigate("Order");
             }}>
@@ -55,7 +61,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                         callableMethod={(): void => { ProductController.FilterProductsByText(searchableList, searchText, SetProductsList); }}
                         callableCancelMethod={(): void => { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText) }}
                         inputPlaceholder={"Find the best for you!"}
-                        buttonIcon={require("../../image/search-icon.png")}
+                        buttonIcon={<MaterialIcons name="search" size={32} color="#ffffff" />}
                         callableSetter={SetSearchText}
                         value={searchText}
                     />
@@ -68,6 +74,10 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                 <Loader description="Wait, we get the bests for you!" />
                 :
                 <FlatList<Product>
+                    onScroll={(event): void => {
+                        const isInitialPosition: boolean = event.nativeEvent.contentOffset.y <= screenInitialPosition;
+                        SetWelcomeState(isInitialPosition);
+                    }}
                     ListHeaderComponent={
                         <>
                             <View style={style.salesBannerContainer}>
@@ -91,7 +101,23 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 data={categoriesList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({ item }): ReactElement<any, any> => <CategoryButton categoryName={item} selected={item === "all"} /> }
+                                renderItem={({ item, index }): ReactElement<any, any> => {
+                                    const a = item;
+                                    return (
+                                        <CategoryButton 
+                                            categoryName={item} 
+                                            selected={selectedCategory == a} 
+                                            selectedMethod={(): void => {
+                                                SetselectedCategory(item);
+                                                ProductController.FilterProductsByCategory(searchableList, item, SetProductsList);
+                                            }} 
+                                            unselectedMethod={(): void => {
+                                                SetselectedCategory(item);
+                                                ProductController.ResetProductsFilter(searchableList, SetProductsList, SetSearchText);
+                                            }}
+                                        />
+                                    );
+                                }}
                                 keyExtractor={(item, index): string => index.toString()}
                                 numColumns={1}
                             />

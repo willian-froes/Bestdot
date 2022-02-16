@@ -142,6 +142,9 @@ const style: StyleProp<any> = StyleSheet.create({
         fontWeight: 'bold', 
         fontSize: 16, 
         color: '#00C851' 
+    },
+    equalsAlign: { 
+        alignSelf: 'center' 
     }
 });
 

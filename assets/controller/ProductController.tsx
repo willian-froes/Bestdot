@@ -28,9 +28,16 @@ export const ProductController: any = {
 
         SetProductsList(filteredProducts);
     },
-    ResetProductsFilter: function(productsList: Product[], SetProductsList: CallableFunction, SetSearchText: CallableFunction): void {
+    FilterProductsByCategory: function(searchableList: Product[], category: string, SetProductsList: CallableFunction): void {
+        let filteredProducts: Product[] = searchableList.filter((product: Product): boolean => {
+            return product.category === category.toLowerCase();
+        });
+
+        SetProductsList(filteredProducts);
+    },
+    ResetProductsFilter: function(productsList: Product[], SetProductsList: CallableFunction, SetSearchText?: CallableFunction): void {
         SetProductsList(productsList);
-        SetSearchText("");
+        if(SetSearchText) SetSearchText("");
     },
     CheckProductIsBought: function(cart: CartProduct[], item: Product): boolean {
         let boughtItems: CartProduct[] = cart.filter((cartItem: CartProduct) => cartItem.productId == item.id);

@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { StatusBar, Text, View, FlatList, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 import InputWithButton from '../../component/InputWithButton';
 import CartItemCard from '../../component/CartItemCard';
@@ -39,17 +40,17 @@ const MainView: React.FC<Props> = ({ navigation }) => {
 
     useEffect((): void => {
         SetIsLoading(true);
+
         CartController.GetDetailedCart().then((detailedCart: CartItem[]): void => {
             SetDetailedCart(detailedCart);
             CartController.UpdateTotalPrice(detailedCart, SetTotalPrice);
             CartController.UpdateTotalItems(detailedCart, SetTotalItems);
-
             CartController.GetCachedCoupon(SetCouponText).then((coupon: Coupon): void => {
+                SetIsLoading(false);
                 if(coupon) {
                     SetModalIsVisible(true);
                     SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
                 }
-                SetIsLoading(false);
             });
         });
     }, []);
@@ -73,15 +74,15 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     <View style={style.orderProgressLabel}>
                         <Text style={style.orderProgressText}>Done order in 3 steps</Text>
 
-                        <View style={style.orderProgressDetail}>
-                            <OrderStepIndicator selected={true} icon={require("../../image/cart-white-icon.png")} />
+                        <View style={[style.orderProgressDetail, { color: "#000000" }]}>
+                            <OrderStepIndicator selected={true} icon={<MaterialIcons name="shopping-cart" size={28} color="#ffffff" />} />
+                            <Line />  
+                            <OrderStepIndicator selected={false} icon={<MaterialIcons name="not-listed-location" size={28} color="#B5B5B5" />} />
                             <Line />
-                            <OrderStepIndicator selected={false} icon={require("../../image/location-icon.png")} />
-                            <Line />
-                            <OrderStepIndicator selected={false} icon={require("../../image/payment-icon.png")} />
+                            <OrderStepIndicator selected={false} icon={<MaterialIcons name="attach-money" size={28} color="#B5B5B5" />} />
                         </View>
 
-                        <Text style={style.orderProgressText}>First, check your items here!</Text>
+                        <Text style={[style.orderProgressText, { color: "#B5B5B5" }]}>First, check your items here!</Text>
                     </View>
                 }
 
@@ -89,7 +90,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
 
             {isLoading
                 ?
-                <Loader description="Wait, we check yout cart!" />
+                <Loader description="Wait, we check your cart!" />
                 :
                 <>
                     {detailedCart.length == 0
@@ -110,7 +111,7 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                             callableMethod={async (): Promise<void> => CartController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
                                             callableCancelMethod={(): void => SetCouponText("")}
                                             inputPlaceholder={"Have coupon? Insert here!"}
-                                            buttonIcon={require("../../image/check-coupon-icon.png")}
+                                            buttonIcon={<MaterialIcons name="send" size={32} color="#ffffff" />}
                                             callableSetter={SetCouponText}
                                             value={couponText}
                                         />

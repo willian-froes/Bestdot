@@ -44,14 +44,10 @@ const style: StyleProp<any> = StyleSheet.create({
         backgroundColor: '#FF6E63', 
         borderTopRightRadius: 15, 
         borderBottomRightRadius: 15,
-        marginRight: 10 
-    },
-    returnButtonText: { 
-        width: 25, 
-        height: 25, 
-        marginRight: 20, 
-        marginLeft: 30, 
-        marginVertical: 22 
+        marginRight: 10,
+        paddingRight: 20, 
+        paddingLeft: 30, 
+        paddingVertical: 18  
     },
     rightContentLabel: { 
         flexDirection: 'row',
@@ -69,10 +65,6 @@ const style: StyleProp<any> = StyleSheet.create({
         color: '#ffffff', 
         fontWeight: 'bold', 
         marginRight: 10 
-    },
-    cartIcon: { 
-        width: 20, 
-        height: 20 
     },
     userImage: { 
         width: 42, 

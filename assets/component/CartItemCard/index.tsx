@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons  } from '@expo/vector-icons'; 
 
 import SmallSquareButton from '../SmallSquareButton';
 
@@ -28,7 +29,7 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                     callableGetTotalItems();
                     callableGetTotalPrice(detailedCart);
                 }}>
-                    <Image style={style.removeIcon} source={require("../../image/remove-icon.png")}/>
+                    <MaterialIcons name="close" size={20} color="#EC2B2B" />
                 </TouchableOpacity>
                 <View style={style.removeButtonAuxLabel}></View>
             </View>
@@ -50,9 +51,10 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                             <Text style={style.itemPriceIndicator}>/item</Text>
                         </View>
                         <View style={style.itemQuantityLabel}>
-                            <SmallSquareButton icon={require("../../image/decrement-icon.png")} method={(): void => CartController.SetItemQuantity(false, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={false} />
+                            
+                            <SmallSquareButton icon={<MaterialCommunityIcons name="minus" size={24} color="#B5B5B5" />} method={(): void => CartController.SetItemQuantity(false, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={false} />
                             <Text style={style.itemQuantity}>{itemQuantity}</Text>
-                            <SmallSquareButton icon={require("../../image/increment-icon.png")} method={(): void => CartController.SetItemQuantity(true, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={true} />
+                            <SmallSquareButton icon={<MaterialCommunityIcons name="plus" size={24} color="#ffffff" />} method={(): void => CartController.SetItemQuantity(true, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={true} />
                         </View>
                     </View>
                 </View>
