@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, StyleProp } from "react-native";
 
-const style = StyleSheet.create({
+const style: StyleProp<any> = StyleSheet.create({
     line: { 
         flexGrow: 2, 
         borderTopWidth: 2, 

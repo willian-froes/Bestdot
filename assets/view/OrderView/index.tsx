@@ -1,8 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { Text, View, FlatList } from 'react-native';
+import { ReactElement, useEffect, useState } from 'react';
+import { StatusBar, Text, View, FlatList, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
 
 import InputWithButton from '../../component/InputWithButton';
 import CartItemCard from '../../component/CartItemCard';
@@ -22,11 +20,10 @@ import Coupon from '../../model/Coupon';
 import style from './style';
 
 interface Props {
-    navigation: StackNavigationProp<any, any>,
-    route: RouteProp<any, any>
+    navigation: StackNavigationProp<any, any>
 }
 
-const MainView: React.FC<Props> = ({ navigation, route }) => {
+const MainView: React.FC<Props> = ({ navigation }) => {
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
 
     const [couponText, SetCouponText] = useState<string>("");
@@ -38,31 +35,38 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
     const [modalIsVisible, SetModalIsVisible] = useState(false);
     const [modalMessage, SetModalMessage] = useState("");
 
-    useEffect(() => {
-        CartController.GetDetailedCart().then(detailedCart => {
+    const [isLoading, SetIsLoading] = useState<boolean>(false);
+
+    useEffect((): void => {
+        SetIsLoading(true);
+        CartController.GetDetailedCart().then((detailedCart: CartItem[]): void => {
             SetDetailedCart(detailedCart);
-            CartController.UpdateTotalPrice(detailedCart, totalPrice, SetTotalPrice);
-            CartController.UpdateTotalItems(detailedCart, totalItems, SetTotalItems);
-            CartController.GetCachedCoupon(SetCouponText).then((coupon) => {
-                SetModalIsVisible(true);
-                SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
+            CartController.UpdateTotalPrice(detailedCart, SetTotalPrice);
+            CartController.UpdateTotalItems(detailedCart, SetTotalItems);
+
+            CartController.GetCachedCoupon(SetCouponText).then((coupon: Coupon): void => {
+                if(coupon) {
+                    SetModalIsVisible(true);
+                    SetModalMessage(`You have a coupon with code ${coupon.hash.toUpperCase()}, we paste this in coupon input for you!`);
+                }
+                SetIsLoading(false);
             });
         });
     }, []);
 
     return (
         <View style={style.container}>
-            <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
+            <StatusBar backgroundColor='#ffffff' barStyle="dark-content" translucent={false} />
 
             {modalIsVisible
                 ?
-                <Modal description={modalMessage} buttonTitle='Ok!' method={() => { SetModalIsVisible(false); SetModalMessage(""); }} />
+                <Modal description={modalMessage} buttonTitle='Ok!' method={(): void => { SetModalIsVisible(false); SetModalMessage(""); }} />
                 :
                 <></>
             }
 
-            <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Your bests" >
-                {detailedCart.length == 0
+            <Navbar isMain={false} callableGoTo={(): void => navigation.goBack()} title="Your bests" >
+                {isLoading || detailedCart.length == 0
                     ?
                     <></>
                     :
@@ -83,53 +87,66 @@ const MainView: React.FC<Props> = ({ navigation, route }) => {
 
             </Navbar>
 
-            {detailedCart.length == 0
+            {isLoading
                 ?
-                <Loader description="Wait, we get the bests for you!" />
+                <Loader description="Wait, we check yout cart!" />
                 :
                 <>
-                    <FlatList<CartItem>
-                        ListHeaderComponent={
-                            <View style={style.couponInputContainer}>
-                                <InputWithButton 
-                                    callableMethod={async () => CartController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
-                                    callableCancelMethod={()=> SetCouponText("")}
-                                    inputPlaceholder={"Have coupon? Insert here!"}
-                                    buttonIcon={require("../../image/check-coupon-icon.png")}
-                                    callableSetter={SetCouponText}
-                                    value={couponText}
-                                />
+                    {detailedCart.length == 0
+                        ?
+                        <View style={style.emptyLabel}>
+                            <Image style={style.emptyImage} source={require("../../image/undraw_empty_cart.png")} />
+                            <View style={style.emptyTextLabel}>
+                                <Text style={style.feedbackTitle}>Oops...</Text>
+                                <Text style={style.feedbackMessage}>Your cart is empty... Return to products list to get new bets!</Text>
                             </View>
-                        }
-                        data={detailedCart}
-                        renderItem={({ item }) => {        
-                            return(
-                                <CartItemCard 
-                                    item={item}
-                                    callableSetDetailedCart={SetDetailedCart} 
-                                    detailedCart={detailedCart}
-                                    callableGetTotalItems={() => CartController.UpdateTotalItems(detailedCart, totalItems, SetTotalItems)}
-                                    callableGetTotalPrice={() => CartController.UpdateTotalPrice(detailedCart, totalPrice, SetTotalPrice)}
-                                />
-                            );
-                        }}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
+                        </View>
+                        :
+                        <>
+                            <FlatList<CartItem>
+                                ListHeaderComponent={
+                                    <View style={style.couponInputContainer}>
+                                        <InputWithButton 
+                                            callableMethod={async (): Promise<void> => CartController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
+                                            callableCancelMethod={(): void => SetCouponText("")}
+                                            inputPlaceholder={"Have coupon? Insert here!"}
+                                            buttonIcon={require("../../image/check-coupon-icon.png")}
+                                            callableSetter={SetCouponText}
+                                            value={couponText}
+                                        />
+                                    </View>
+                                }
+                                data={detailedCart}
+                                renderItem={({ item }): ReactElement<any, any> => {        
+                                    return(
+                                        <CartItemCard 
+                                            item={item}
+                                            callableSetDetailedCart={SetDetailedCart} 
+                                            detailedCart={detailedCart}
+                                            callableGetTotalItems={(): void => CartController.UpdateTotalItems(detailedCart, SetTotalItems)}
+                                            callableGetTotalPrice={(): void => CartController.UpdateTotalPrice(detailedCart, SetTotalPrice)}
+                                        />
+                                    );
+                                }}
+                                keyExtractor={(item, index): string => index.toString()}
+                            />
 
-                    <View>
-                        <View style={style.footer}/>
+                            <View>
+                                <View style={style.footer}/>
 
-                        <OrderValueItem description={`Products (${totalItems} item${totalItems > 0 ? 's' : ''}):`} value={`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
-                        {coupon
-                            ?
-                            <OrderValueItem description={`Coupon ${coupon?.hash} discount:`} value={`-$ ${(Math.round((totalPrice * coupon?.discount) * 100) / 100).toFixed(2)}`} valueTextColor="#EC2B2B" />
-                            :
-                            <></>
-                        }
-                        <OrderValueItem description={"Subtotal:"} value={`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
-                        
-                        <LargeButton title="Check and confirm receiving address" method={() => {}}/>
-                    </View>
+                                <OrderValueItem description={`Products (${totalItems} item${totalItems > 0 ? 's' : ''}):`} value={`$ ${(Math.round(totalPrice * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
+                                {coupon
+                                    ?
+                                    <OrderValueItem description={`Coupon ${coupon?.hash} discount:`} value={`-$ ${(Math.round((totalPrice * coupon?.discount) * 100) / 100).toFixed(2)}`} valueTextColor="#EC2B2B" />
+                                    :
+                                    <></>
+                                }
+                                <OrderValueItem description={"Subtotal:"} value={`$ ${(Math.round((coupon ? totalPrice-(totalPrice * coupon.discount) : totalPrice) * 100) / 100).toFixed(2)}`} valueTextColor="#00C851" />
+                                
+                                <LargeButton title="Check and confirm receiving address" method={(): void => {}}/>
+                            </View>
+                        </>
+                    }
                 </>
             }
         </View>

@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { StatusBar, View, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { GameEngine } from 'react-native-game-engine';
 
@@ -11,8 +10,8 @@ import MatchInfoLabel from '../../component/MatchInfoLabel';
 import Loader from '../../component/Loader';
 import Modal from '../../component/Modal';
 
-import { CouponService } from '../../service/CouponService';
 import { MinigameController } from '../../controller/MinigameController';
+import { CouponController } from '../../controller/CouponController';
 
 import style from './style';
 
@@ -22,42 +21,32 @@ interface Props {
 
 const MinigameView: React.FC<Props> = ({ navigation }) => {
     const [isRunning, SetIsRunning] = useState<boolean>(false);
-    const [gameEngine, SetGameEngine] = useState<any>(null);
+    const [gameEngine, SetGameEngine] = useState<GameEngine | null>(null);
 
     const [currentPoints, SetCurrentPoints] = useState<number>(0);
     const [score, SetScore] = useState<any | null>({ last: 0, best: 0 });
     const [gettedCoupon, SetGettedCoupon] = useState<any>({ coupon: null, state: 'to-find' });
 
-    const [loading, SetLoading] = useState(false);
+    const [loading, SetLoading] = useState<boolean>(false);
     const [couponIsCopied, SetCouponIsCopied] = useState<boolean>(false);
 
-    const [modalIsVisible, SetModalIsVisible] = useState(true);
-    const [modalMessage, SetModalMessage] = useState("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
+    const [modalIsVisible, SetModalIsVisible] = useState<boolean>(true);
+    const [modalMessage, SetModalMessage] = useState<string>("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
 
     let minimunPoints = 5;
 
-    useEffect(() => {
+    useEffect((): void => {
         SetIsRunning(false);
         MinigameController.LoadScore(SetScore);
     }, []);
 
-    const StartGame = (isRestart: boolean) => {
-        SetCurrentPoints(0);
-        SetIsRunning(true);
-        if (isRestart) MinigameController.SaveScore(currentPoints, SetScore);
-
-        SetGettedCoupon({ coupon: null, state: 'to-find' });
-        SetLoading(false);
-        SetCouponIsCopied(false);
-    }
-
     return(
         <View style={style.container}>
-            <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
+            <StatusBar backgroundColor='#ffffff' barStyle="dark-content" translucent={false} />
 
             {modalIsVisible
                 ?
-                <Modal buttonTitle="Ok, let's go!" description={modalMessage} method={() => {
+                <Modal buttonTitle="Ok, let's go!" description={modalMessage} method={(): void => {
                     SetModalIsVisible(false); 
                     SetModalMessage(""); 
                     SetIsRunning(true);
@@ -66,7 +55,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                 <></>
             }
 
-            <Navbar isMain={false} callableGoTo={() => navigation.goBack()} title="Flappy dot">
+            <Navbar isMain={false} callableGoTo={(): void => navigation.goBack()} title="Flappy dot">
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <MatchInfoLabel value={currentPoints.toString()} description={`point${currentPoints == 1 ? '' : 's'}`} />
 
@@ -90,12 +79,12 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
             {isRunning || modalIsVisible
                 ?
                 <GameEngine
-                    ref={(ref) => SetGameEngine(ref)}
+                    ref={(ref): void => SetGameEngine(ref)}
                     style={style.minigameScene}
                     systems={[MinigameController.ActivePhysics]}
                     entities={MinigameController.Restart()}
                     running={isRunning}
-                    onEvent={(e: any) => MinigameController.SetGameState(e, gameEngine, SetIsRunning, SetCurrentPoints, currentPoints)}
+                    onEvent={(e: any): void => MinigameController.SetGameState(e, gameEngine, SetIsRunning, SetCurrentPoints, currentPoints)}
                 />
                 :
                 <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -131,7 +120,7 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                                                 <View style={style.couponHashLabel}>
                                                     <Text style={style.couponHashText}>{gettedCoupon.coupon.hash}</Text>
                                                 </View>
-                                                <TouchableOpacity style={style.couponSaveButton} onPress={() => MinigameController.SaveCoupon(gettedCoupon, couponIsCopied, SetCouponIsCopied)}>
+                                                <TouchableOpacity style={style.couponSaveButton} onPress={(): void => MinigameController.SaveCoupon(gettedCoupon, couponIsCopied, SetCouponIsCopied)}>
                                                     <Text style={[style.couponSaveButtonText, { color: couponIsCopied ? '#B5B5B5' : '#FF6E63' }]}>{couponIsCopied ? 'CODE SAVED!' : 'SAVE THIS CODE'}</Text>
                                                 </TouchableOpacity>
                                             </View>
@@ -155,36 +144,16 @@ const MinigameView: React.FC<Props> = ({ navigation }) => {
                             {currentPoints >= minimunPoints && gettedCoupon.state === 'to-find'
                                 ?
                                 <View style={style.footer}>
-                                    <TouchableOpacity style={style.tryAgainButton} onPress={() => StartGame(true)}>
+                                    <TouchableOpacity style={style.tryAgainButton} onPress={(): void => MinigameController.StartGame(currentPoints, SetCurrentPoints, SetIsRunning, SetGettedCoupon, SetLoading, SetCouponIsCopied, SetScore)}>
                                         <Text style={style.tryAgainButtonText}>Try again!</Text>
                                     </TouchableOpacity>
         
-                                    <TouchableOpacity style={style.getCouponButton} onPress={() => {
-                                        let luckNumber = currentPoints + (currentPoints / 2);
-                                        let random = Math.random() * 100;
-        
-                                        SetLoading(true);
-                                        if(random <= luckNumber) {
-                                            CouponService.GetCoupons(true).then((response) => {
-                                                let coupons: any = response.data;
-                                                if(coupons.length > 0) {
-                                                    let couponIndex = Math.floor(Math.random() * coupons.length);
-
-                                                    SetGettedCoupon({ coupon: coupons[couponIndex], state: 'found' });
-                                                } else {
-                                                    SetGettedCoupon({ coupon: null, state: 'not-found' });
-                                                }
-                                            }).then(() =>  SetLoading(false));
-                                        } else {
-                                            SetLoading(false);
-                                            SetGettedCoupon({ coupon: null, state: 'not-found' });
-                                        }
-                                    }}>
+                                    <TouchableOpacity style={style.getCouponButton} onPress={async (): Promise<void> => CouponController.TryGetCoupon(currentPoints, SetLoading, SetGettedCoupon)}>
                                         <Text style={style.getCouponButtonText}>Try get coupon!</Text>
                                     </TouchableOpacity>
                                 </View>
                                 :
-                                <LargeButton title="Try again!" method={() => { StartGame(true) }} />
+                                <LargeButton title="Try again!" method={(): void => MinigameController.StartGame(currentPoints, SetCurrentPoints, SetIsRunning, SetGettedCoupon, SetLoading, SetCouponIsCopied, SetScore)} />
                             }
                         </>
                     }

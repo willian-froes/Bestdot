@@ -3,49 +3,30 @@ import { Text, View, Image, TouchableOpacity } from 'react-native';
 
 import SmallSquareButton from '../SmallSquareButton';
 
+import { CartController } from '../../controller/CartController';
+
 import CartItem from '../../model/CartItem';
 
 import style from './style';
-import { CartController } from '../../controller/CartController';
-import CartProduct from '../../model/CartProduct';
 
 interface Props {
     item: CartItem,
     callableSetDetailedCart: CallableFunction,
     detailedCart: CartItem[],
     callableGetTotalItems: CallableFunction,
-    callableGetTotalPrice: CallableFunction,
+    callableGetTotalPrice: CallableFunction
 }
 
 const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailedCart, callableGetTotalItems, callableGetTotalPrice }: Props) => {
     const [itemQuantity, SetItemQuantity] = useState<number>(item.quantity? item.quantity : 1);
 
-    const SetQuantity = (isIncrement: boolean) => {
-        detailedCart.filter((cartItem) => {
-            if(item.id == cartItem.id && cartItem.quantity && item.quantity) {
-                item.quantity = isIncrement ? item.quantity + 1 : itemQuantity > 1 ? item.quantity - 1 : 1;
-                SetItemQuantity(item.quantity);
-            }
-        });
-        callableSetDetailedCart(detailedCart);
-
-        callableGetTotalItems();
-        callableGetTotalPrice(detailedCart);
-    }
-
     return(
         <View style={style.cartItemCard}>
             <View style={style.removeButtonLabel}>
-                <TouchableOpacity style={style.removeButton} onPress={async () => {
-                    let detailedCartAux: CartItem[] = [];
-                    detailedCart.filter((detailedItem) => {
-                        if(detailedItem.id !== item.id) detailedCartAux.push(detailedItem);
-                    });
-
-                    let cart: CartProduct[] = await CartController.LoadCart();
-                    CartController.RemoveProductFromCart(cart, item);
-                    
-                    callableSetDetailedCart(detailedCartAux);
+                <TouchableOpacity style={style.removeButton} onPress={async (): Promise<void> => {
+                    CartController.UpdateCart(detailedCart, item);
+                    callableGetTotalItems();
+                    callableGetTotalPrice(detailedCart);
                 }}>
                     <Image style={style.removeIcon} source={require("../../image/remove-icon.png")}/>
                 </TouchableOpacity>
@@ -69,9 +50,9 @@ const CartItemCard: React.FC<Props> = ({ item, callableSetDetailedCart, detailed
                             <Text style={style.itemPriceIndicator}>/item</Text>
                         </View>
                         <View style={style.itemQuantityLabel}>
-                            <SmallSquareButton icon={require("../../image/decrement-icon.png")} method={() => SetQuantity(false)} isDefault={false} />
+                            <SmallSquareButton icon={require("../../image/decrement-icon.png")} method={(): void => CartController.SetItemQuantity(false, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={false} />
                             <Text style={style.itemQuantity}>{itemQuantity}</Text>
-                            <SmallSquareButton icon={require("../../image/increment-icon.png")} method={() => SetQuantity(true)} isDefault={true} />
+                            <SmallSquareButton icon={require("../../image/increment-icon.png")} method={(): void => CartController.SetItemQuantity(true, detailedCart, item, itemQuantity, SetItemQuantity, callableSetDetailedCart, callableGetTotalItems, callableGetTotalPrice)} isDefault={true} />
                         </View>
                     </View>
                 </View>

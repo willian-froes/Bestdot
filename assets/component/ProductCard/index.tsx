@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 
 import Product from '../../model/Product';
+
 import style from './style';
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
     callableRemoveMethod: CallableFunction
 }
     
-const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }) => {
+const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }: Props) => {
     const [hasInTheCart, SetHasInTheCart] = useState<boolean>(product.isBought ? true : false);
 
     return(
@@ -34,17 +35,11 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                     
                     {hasInTheCart
                         ?
-                        <TouchableOpacity style={style.removeButton} onPress={() => {
-                            callableRemoveMethod();
-                            SetHasInTheCart(false);
-                        }}>
+                        <TouchableOpacity style={style.removeButton} onPress={(): void => { callableRemoveMethod(); SetHasInTheCart(false); }}>
                             <Image style={style.removeButtonIcon} source={require("../../image/remove-item-icon.png")} />
                         </TouchableOpacity>
                         :
-                        <TouchableOpacity style={style.addInCartButton} onPress={() => {
-                            callableAddMethod();
-                            SetHasInTheCart(true);
-                        }}>
+                        <TouchableOpacity style={style.addInCartButton} onPress={(): void => { callableAddMethod(); SetHasInTheCart(true); }}>
                             <Image style={style.addInCartButtonIcon} source={require("../../image/cart-white-icon.png")} />
                         </TouchableOpacity>
                     }

@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+
 import style from './style';
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
     value: string
 }
     
-const MatchInfoLabel: React.FC<Props> = ({ description, value }) => {
+const MatchInfoLabel: React.FC<Props> = ({ description, value }: Props) => {
     return(
         <View style={style.infoLabel}>
             <Text style={style.infoValue}>{value}</Text>

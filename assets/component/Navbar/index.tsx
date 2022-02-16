@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
+
 import style from './style';
 
 interface Props {
@@ -10,8 +11,8 @@ interface Props {
     title: string
 }
     
-const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children, title }) => {
-    let splitedTitle = title.split(" ");
+const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children, title }: Props) => {
+    let splitedTitle: string[] = title.split(" ");
 
     return(
         <View style={style.container}>
@@ -36,7 +37,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                         </>
                         :
                         <View style={style.secundaryPageTitle}>
-                            <TouchableOpacity style={style.returnButton} onPress={() => callableGoTo()}>
+                            <TouchableOpacity style={style.returnButton} onPress={(): void => callableGoTo()}>
                                 <Image style={style.returnButtonText} source={require("../../image/return-icon.png")} />
                             </TouchableOpacity>
 
@@ -50,7 +51,7 @@ const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, child
                     
                     {isMain
                         ?
-                        <TouchableOpacity style={style.cartButton} onPress={() => callableGoTo()}>
+                        <TouchableOpacity style={style.cartButton} onPress={(): void => callableGoTo()}>
                             <Text style={style.cartSize}>{cartLength}</Text>
                             <Image style={style.cartIcon} source={require("../../image/cart-white-icon.png")} />
                         </TouchableOpacity>

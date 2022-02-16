@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { Text, View } from 'react-native';
 
-import Product from '../../model/Product';
 import LargeButton from '../LargeButton';
 
 import style from './style';
@@ -12,7 +10,7 @@ interface Props {
     method: CallableFunction
 }
     
-const Modal: React.FC<Props> = ({ description, buttonTitle, method }) => {
+const Modal: React.FC<Props> = ({ description, buttonTitle, method }: Props) => {
     return(
         <View style={style.modalBackground}>
             <View style={style.modalLabel}>

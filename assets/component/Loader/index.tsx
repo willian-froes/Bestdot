@@ -1,4 +1,5 @@
 import { ActivityIndicator, View, Text } from 'react-native';
+
 import style from './style';
 
 interface Props {

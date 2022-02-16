@@ -1,9 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
+import { ReactElement, useCallback, useState } from 'react';
+import { StatusBar, FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
-
-import { useCallback, useState } from 'react';
-import { FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
 
 import ProductCard from '../../component/ProductCard';
 import InputWithButton from '../../component/InputWithButton';
@@ -20,7 +18,7 @@ import CartProduct from '../../model/CartProduct';
 import style from './style';
 
 interface Props {
-    navigation: StackNavigationProp<any, any>
+    navigation?: StackNavigationProp<any, any>
 }
 
 const MainView: React.FC<Props> = ({ navigation }) => {
@@ -35,27 +33,27 @@ const MainView: React.FC<Props> = ({ navigation }) => {
 
     const [isLoading, SetIsLoading] = useState<boolean>(false);
 
-    useFocusEffect(useCallback(() => { 
+    useFocusEffect(useCallback((): void => { 
         SetIsLoading(true);
         ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
-        CartController.LoadCart().then(cart => { SetCart(cart); SetCartCount(cart.length) });
+        CartController.LoadCart().then((cart: CartProduct[]) => { SetCart(cart); SetCartCount(cart.length); });
     }, []));
 
     return (
         <View style={style.container}>
-            <StatusBar style='dark' backgroundColor='#ffffff' translucent={false} />
+            <StatusBar backgroundColor='#ffffff' barStyle="dark-content"  translucent={false} />
 
-            <Navbar title="" isMain={true} cartLength={cartCount} callableGoTo={() => {
+            <Navbar title="" isMain={true} cartLength={cartCount} callableGoTo={(): void => {
                 CartController.SaveCart(cart);
-                navigation.navigate("Order");
+                navigation?.navigate("Order");
             }}>
                 {productsList.length == 0 || categoriesList.length == 0
                     ?
                     <></>
                     :
                     <InputWithButton 
-                        callableMethod={() => { ProductController.FilterProductsByText(searchableList, searchText, SetProductsList); }}
-                        callableCancelMethod={()=> { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText) }}
+                        callableMethod={(): void => { ProductController.FilterProductsByText(searchableList, searchText, SetProductsList); }}
+                        callableCancelMethod={(): void => { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText) }}
                         inputPlaceholder={"Find the best for you!"}
                         buttonIcon={require("../../image/search-icon.png")}
                         callableSetter={SetSearchText}
@@ -77,8 +75,8 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <View style={style.minigameAccessLabel}>
-                                <Text style={style.minigameAccessDescription} numberOfLines={2}>You want to get {"\n"}coupons up to 15%?</Text>
-                                <TouchableOpacity style={style.minigameAccessButton} onPress={() => navigation.navigate("Minigame")}>
+                                <Text style={style.minigameAccessDescription} numberOfLines={2}>Want you get coupons up to 15%?</Text>
+                                <TouchableOpacity style={style.minigameAccessButton} onPress={(): void => navigation?.navigate("Minigame")}>
                                     <Text style={style.minigameAccessButtonText}>PLAY NOW!</Text>
                                 </TouchableOpacity>
                             </View>
@@ -93,25 +91,25 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 data={categoriesList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({ item }) => <CategoryButton categoryName={item} selected={item === "all"} /> }
-                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }): ReactElement<any, any> => <CategoryButton categoryName={item} selected={item === "all"} /> }
+                                keyExtractor={(item, index): string => index.toString()}
                                 numColumns={1}
                             />
                         </>
                     }
                     style={style.productListContainer}
                     data={productsList}
-                    renderItem={({ item }) => {
+                    renderItem={({ item }): ReactElement<any, any> => {
                         item.isBought = ProductController.CheckProductIsBought(cart, item);
                         
                         return(
                             <ProductCard product={item} 
-                                callableAddMethod={() => CartController.InsertProductInCart(cart, item).then(newCart => SetCart(newCart)).then(() => SetCartCount(cart.length))}
-                                callableRemoveMethod={() => CartController.RemoveProductFromCart(cart, item).then(newCart => SetCart(newCart)).then(() => SetCartCount(cart.length))}
+                                callableAddMethod={() => CartController.InsertProductInCart(cart, item).then((newCart: CartProduct[]) => SetCart(newCart)).then(() => SetCartCount(cart.length))}
+                                callableRemoveMethod={() => CartController.RemoveProductFromCart(cart, item).then((newCart: CartProduct[]) => SetCart(newCart)).then(() => SetCartCount(cart.length))}
                             />
                         );
                     }}
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item, index): string => index.toString()}
                     numColumns={2}
                 />
             }

@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StyleProp } from 'react-native';
 
-const style = StyleSheet.create({
+const style: StyleProp<any> = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff'
@@ -17,32 +17,34 @@ const style = StyleSheet.create({
         width: undefined 
     },
     minigameAccessLabel: { 
+        flex:1, 
         flexDirection: 'row', 
         justifyContent: 'space-between', 
-        backgroundColor: '#FF6E63', 
+        backgroundColor: '#ffffff', 
         borderRadius: 15, 
-        marginBottom: 10 
+        marginBottom: 10,
+        borderColor: '#B5B5B5', 
+        borderWidth: 1 
     },
     minigameAccessDescription:  { 
         fontWeight: 'bold', 
-        color: '#ffffff', 
-        fontSize: 18, 
-        marginHorizontal: 15, 
-        marginVertical: 10 
+        color: '#F0AD4E', 
+        fontSize: 14,
+        marginVertical: 10,
+        marginLeft: 15,
     },
     minigameAccessButton: { 
-        backgroundColor: '#ffffff', 
-        borderColor: '#B5B5B5', 
-        borderWidth: 1, 
+        backgroundColor: '#FF6E63', 
+        borderColor: '#FF6E63', 
+        borderWidth: 2, 
         justifyContent: 'center', 
-        borderTopRightRadius: 15, 
-        borderBottomRightRadius: 15, 
+        borderRadius: 13, 
         paddingHorizontal: 20 
     },
     minigameAccessButtonText: { 
         fontWeight: 'bold', 
-        fontSize: 19, 
-        color: '#F0AD4E' 
+        fontSize: 14, 
+        color: '#ffffff' 
     },
     productListTitleContainer: {
         marginHorizontal: 5 

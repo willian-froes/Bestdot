@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, StyleProp } from "react-native";
 
-const style = StyleSheet.create({
+const style: StyleProp<any> = StyleSheet.create({
     card: { 
         width: '48%', 
         marginHorizontal: 5, 

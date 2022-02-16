@@ -3,7 +3,7 @@ import CartProduct from '../model/CartProduct';
 const url: RequestInfo = "https://fakestoreapi.com";
 
 export const ProductService = {
-    GetProducts: async function() {
+    GetProducts: async function(): Promise<any>  {
         let init: RequestInit = { method: 'GET' }
 
         const response: Response = await fetch(`${url}/products`, init);
@@ -11,7 +11,7 @@ export const ProductService = {
 
         return ({data, status: response.status});  
     },
-    GetCategories: async function() {
+    GetCategories: async function(): Promise<any>  {
         let init: RequestInit = { method: 'GET' }
 
         const response: Response = await fetch(`${url}/products/categories`, init);
@@ -19,7 +19,7 @@ export const ProductService = {
 
         return ({data, status: response.status});     
     },
-    GetProductById: async function(item: CartProduct) {
+    GetProductById: async function(item: CartProduct): Promise<any>  {
         let init: RequestInit = { method: 'GET' }
 
         const response: Response = await fetch(`${url}/products/${item.productId}`, init);

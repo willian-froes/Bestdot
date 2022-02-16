@@ -1,4 +1,5 @@
 import { TouchableOpacity, Text } from 'react-native';
+
 import style from './style';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
     
 const LargeButton: React.FC<Props> = ({ title, method }: Props) => {
     return(
-        <TouchableOpacity style={style.button} onPress={() => method()}>
+        <TouchableOpacity style={style.button} onPress={(): void => method()}>
             <Text style={style.title}>{title}</Text>
         </TouchableOpacity>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
+
 import style from './style';
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
     value: number
 }
     
-const ScoreLabel: React.FC<Props> = ({ description, value }) => {
+const ScoreLabel: React.FC<Props> = ({ description, value }: Props) => {
     return(
         <View style={style.scoreLabel}>
             <Text style={style.scoreDescription}>{description}:</Text>
