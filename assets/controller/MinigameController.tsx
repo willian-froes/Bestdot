@@ -77,9 +77,9 @@ export const MinigameController = {
         }
     },
     StartGame: function(currentPoints: number, SetCurrentPoints: CallableFunction, SetIsRunning: CallableFunction, SetGettedCoupon: CallableFunction, SetLoading: CallableFunction, SetCouponIsCopied: CallableFunction, SetScore: CallableFunction): void {
-        SetCurrentPoints(0);
         SetIsRunning(true);
         MinigameController.SaveScore(currentPoints, SetScore);
+        SetCurrentPoints(0);
 
         SetGettedCoupon({ coupon: null, state: 'to-find' });
         SetLoading(false);
@@ -87,7 +87,7 @@ export const MinigameController = {
     },
     LoadScore: async function(SetScore: CallableFunction): Promise<void> {
         let data: string | null = await AsyncStorage.getItem("score");
-
+        
         if(data) {
             let score: any = JSON.parse(data);
             SetScore(score);
@@ -107,6 +107,9 @@ export const MinigameController = {
 
             let newScoreString: string = JSON.stringify(newScore);
             AsyncStorage.setItem("score", newScoreString)
+        } else {
+            let newScoreString: string = JSON.stringify({ last: currentPoints, best: currentPoints });
+            AsyncStorage.setItem("score", newScoreString);
         }
     },
     SetGameState: function(e: any, gameEngine: any, SetIsRunning: CallableFunction, SetCurrentPoints: CallableFunction, currentPoints: number): void {

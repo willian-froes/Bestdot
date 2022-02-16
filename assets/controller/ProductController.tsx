@@ -1,7 +1,9 @@
 import { ProductService } from "../service/ProductService";
+import CartController from "./CartController";
 
 import CartProduct from "../model/CartProduct";
 import Product from "../model/Product";
+import CartItem from "../model/CartItem";
 
 export const ProductController: any = {
     LoadProducts: function(SetProductsList: CallableFunction, SetSearchableList: CallableFunction, SetCategoriesList: CallableFunction, SetIsLoading: CallableFunction): void {
@@ -10,14 +12,23 @@ export const ProductController: any = {
         ProductService.GetProducts().then((response: any): void => {
             let products: Product[] = response.data;
 
-            SetProductsList(products);
-            SetSearchableList(products);
+            CartController.LoadCart().then((cart: CartProduct[]) => { 
+                products.forEach((product: Product): void => {
+                    cart.forEach((cartItem: CartProduct) => {
+                        if(cartItem.productId == product.id) product.isBought = true;
+                    });
+                });
 
-            ProductService.GetCategories().then((response: any): void => {
-                let categories: any = response.data;
-                SetCategoriesList(["all", ...categories]);
-                SetIsLoading(false);
+                SetProductsList(products);
+                SetSearchableList(products);
+    
+                ProductService.GetCategories().then((response: any): void => {
+                    let categories: any = response.data;
+                    SetCategoriesList(["all", ...categories]);
+                    SetIsLoading(false);
+                });
             });
+
         });
     
     },

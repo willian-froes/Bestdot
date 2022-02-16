@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useState } from 'react';
-import { StatusBar, FlatList, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { StatusBar, FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
@@ -35,14 +35,17 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     const [cartCount, SetCartCount] = useState<number>(0);
 
     const [isLoading, SetIsLoading] = useState<boolean>(false);
-    const [welcomeState, SetWelcomeState] = useState<boolean>(false);
+    const [welcomeState, SetWelcomeState] = useState<boolean>(true);
 
-    let screenInitialPosition: number = Dimensions.get('window').height * 0.3;
+    // let screenInitialPosition: number = 50;
 
-    useFocusEffect(useCallback((): void => { 
+    useFocusEffect(useCallback((): void => {
         SetIsLoading(true);
         ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
-        CartController.LoadCart().then((cart: CartProduct[]) => { SetCart(cart); SetCartCount(cart.length); });
+        CartController.LoadCart().then((cart: CartProduct[]) => { 
+            SetCart(cart); 
+            SetCartCount(cart.length); 
+        });
     }, []));
 
     return (
@@ -59,14 +62,13 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     :
                     <InputWithButton 
                         callableMethod={(): void => { ProductController.FilterProductsByText(searchableList, searchText, SetProductsList); }}
-                        callableCancelMethod={(): void => { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText) }}
+                        callableCancelMethod={(): void => { ProductController.ResetProductsFilter(productsList, SetProductsList, SetSearchText); }}
                         inputPlaceholder={"Find the best for you!"}
                         buttonIcon={<MaterialIcons name="search" size={32} color="#ffffff" />}
                         callableSetter={SetSearchText}
                         value={searchText}
                     />
                 }
-                
             </Navbar>
 
             {isLoading
@@ -75,8 +77,8 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                 :
                 <FlatList<Product>
                     onScroll={(event): void => {
-                        const isInitialPosition: boolean = event.nativeEvent.contentOffset.y <= screenInitialPosition;
-                        SetWelcomeState(isInitialPosition);
+                        // const isInitialPosition: boolean = event.nativeEvent.contentOffset.y < screenInitialPosition;
+                        // SetWelcomeState(isInitialPosition);
                     }}
                     ListHeaderComponent={
                         <>
@@ -101,12 +103,13 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                                 data={categoriesList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={({ item, index }): ReactElement<any, any> => {
-                                    const a = item;
+                                renderItem={({ item }): ReactElement<any, any> => {
+                                    const categoryText = item;
+
                                     return (
                                         <CategoryButton 
                                             categoryName={item} 
-                                            selected={selectedCategory == a} 
+                                            selected={selectedCategory == categoryText} 
                                             selectedMethod={(): void => {
                                                 SetselectedCategory(item);
                                                 ProductController.FilterProductsByCategory(searchableList, item, SetProductsList);
@@ -126,8 +129,6 @@ const MainView: React.FC<Props> = ({ navigation }) => {
                     style={style.productListContainer}
                     data={productsList}
                     renderItem={({ item }): ReactElement<any, any> => {
-                        item.isBought = ProductController.CheckProductIsBought(cart, item);
-                        
                         return(
                             <ProductCard product={item} 
                                 callableAddMethod={() => CartController.InsertProductInCart(cart, item).then((newCart: CartProduct[]) => SetCart(newCart)).then(() => SetCartCount(cart.length))}

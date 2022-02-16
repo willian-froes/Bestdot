@@ -40,13 +40,13 @@ const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemo
                 <View style={style.cardFooter}>
                     <Text style={style.productPrice}>{`$ ${(Math.round(product.price * 100) / 100).toFixed(2)}`}</Text>
                     
-                    {hasInTheCart
+                    {hasInTheCart && product.isBought
                         ?
-                        <TouchableOpacity style={style.removeButton} onPress={(): void => { callableRemoveMethod(); SetHasInTheCart(false); }}>
+                        <TouchableOpacity style={style.removeButton} onPress={(): void => { callableRemoveMethod(); SetHasInTheCart(false); product.isBought = false; }}>
                             <MaterialIcons name="remove-shopping-cart" size={26} color="#EC2B2B" />
                         </TouchableOpacity>
                         :
-                        <TouchableOpacity style={style.addInCartButton} onPress={(): void => { callableAddMethod(); SetHasInTheCart(true); }}>
+                        <TouchableOpacity style={style.addInCartButton} onPress={(): void => { callableAddMethod(); SetHasInTheCart(true); product.isBought = true; }}>
                             <MaterialIcons name="shopping-cart" size={24} color="#ffffff" />
                         </TouchableOpacity>
                     }
