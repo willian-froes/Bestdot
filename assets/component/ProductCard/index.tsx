@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -7,12 +7,21 @@ import Product from '../../model/Product';
 import style from './style';
 
 interface Props {
+    /** Produto a ser renderizado no componente */
     product: Product,
+    /** Método que permite adicionar o produto no carrinho */
     callableAddMethod: CallableFunction,
+    /** Método que permite remover o produto do carrinho, disponibilizado após adicionar o produto */
     callableRemoveMethod: CallableFunction
 }
-    
-const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }: Props) => {
+
+/**
+ * Componente card de um produto na lista de produtos disponíveis para compra
+ * @param { Props } Props parâmetro que contém as propriedades que o componente recebe
+ * @returns { ReactElement } arvore de elementos que compõem o componente
+ */
+const ProductCard: React.FC<Props> = ({ product, callableAddMethod, callableRemoveMethod }: Props): ReactElement => {
+    /** Constante de estado, flag para verificar se o produto atual está no carrinho ou não */
     const [hasInTheCart, SetHasInTheCart] = useState<boolean>(product.isBought ? true : false);
 
     return(

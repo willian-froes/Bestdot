@@ -22,7 +22,12 @@ interface Props {
     navigation?: StackNavigationProp<any, any>
 }
 
-const MainView: React.FC<Props> = ({ navigation }) => {
+/**
+ * View da tela principal, responsável por renderizar a lista de produtos e recursos de filtros, além do acesso ao minigame e banner de propaganda
+ * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @returns { ReactElement } arvore de elementos que compõem a tela principal
+ */
+const MainView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
     const [productsList, SetProductsList] = useState<Product[]>([]);
 
     const [categoriesList, SetCategoriesList] = useState<string[]>([]);

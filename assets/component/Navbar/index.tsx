@@ -1,19 +1,31 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 
 import style from './style';
 
 interface Props {
+    /** Flag para indicar se a tela é principal ou não */
     isMain: boolean,
+    /** Variável opcional que indica o tamanho atual do carrinho, utilizando o tamanho de lista. */
     cartLength?: number,
+    /** Método responsável por navegação de tela */
     callableGoTo: CallableFunction
+    /** Elemento filho a ser renderizado abaixo das informações base do menu superior, também é opcional */
     children?: ReactNode,
+    /** Título da página secundária */
     title: string,
+    /** Flag para capturar o estado do menu superior quando tela principal, permitindo ocultar o texto de boas vindas em onScroll do FlatList */
     welcomeState?: boolean
 }
-    
-const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children, title, welcomeState }: Props) => {
+
+/**
+ * Componente do menu superior, contendo renderização condicional para tela principal e secundárias
+ * @param { Props } Props parâmetro que contém as propriedades que o componente recebe
+ * @returns { ReactElement } arvore de elementos que compõem o componente
+ */
+const Navbar: React.FC<Props> = ({ isMain=false, cartLength, callableGoTo, children, title, welcomeState }: Props): ReactElement => {
+    /** Título da página secundária, lista das duas palavras informadas */
     let splitedTitle: string[] = title.split(" ");
 
     return(

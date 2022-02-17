@@ -24,7 +24,12 @@ interface Props {
     navigation: StackNavigationProp<any, any>
 }
 
-const MainView: React.FC<Props> = ({ navigation }) => {
+/**
+ * View da tela do carrinho/pedido, responsável por renderizar os items inclusos no carrinho de compras, também disponibiliza um resumo geral do pedido
+ * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @returns { ReactElement } arvore de elementos que compõem a tela do carrinho/pedido
+ */
+const OrderView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
 
     const [couponText, SetCouponText] = useState<string>("");
@@ -154,4 +159,4 @@ const MainView: React.FC<Props> = ({ navigation }) => {
     );
 }
 
-export default MainView;
+export default OrderView;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import { StatusBar, View, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { GameEngine } from 'react-native-game-engine';
@@ -20,7 +20,12 @@ interface Props {
     navigation: StackNavigationProp<any, any>
 }
 
-const MinigameView: React.FC<Props> = ({ navigation }) => {
+/**
+ * View da tela do minigame, responsável por renderizar o minigame Flappy dot e sortear um cupom quando possível
+ * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @returns { ReactElement } arvore de elementos que compõem a tela do minigame
+ */
+const MinigameView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
     const [isRunning, SetIsRunning] = useState<boolean>(false);
     const [gameEngine, SetGameEngine] = useState<GameEngine | null>(null);
 

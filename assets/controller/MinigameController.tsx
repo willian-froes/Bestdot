@@ -4,10 +4,20 @@ import { Body, Engine, Events, World } from 'matter-js';
 
 import { GameObjectHelper } from '../helper/GameObjectHelper';
 
+/** Altura da janela do dispositivo */
 const windowHeight = Dimensions.get('window').height;
+/** Largura da janela do dispositivo */
 const windowWidth = Dimensions.get('window').width;
 
+/**
+ * Controller que contém todos métodos referentes ao minigame
+ */
 export const MinigameController = {
+    /**
+     * ActivePhysics, método que atualiza o comportamento dos objetos na cena do minigame e altera o comportamento de acordo com regras físicas
+     * @param { any } entities entidades/objetos contidos no mundo 2d
+     * @param { any } props propriedades que a game engine retorna, sendo a lista de touches, tempo alterado realtime e o dispatcher
+     */
     ActivePhysics: function(entities: any, {touches, time, dispatch}: any): void {
         let engine: Engine = entities.physics.engine;
         Engine.update(engine, time.delta);
@@ -39,9 +49,20 @@ export const MinigameController = {
         
         return entities;
     },
+    /**
+     * GetRandom, método que calcula um valor no intervalo de um valor mínimo e máximo
+     * @param { number } min valor inicial do intervalo
+     * @param { number } max valor final do intervalo
+     * @returns { number } retorna um valor gerado entrdentro do intervalo
+     */
     GetRandom: function(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
     },
+    /**
+     * GetPipeSizePosPair, método que obtém a posição e tamanho de um par de obstáculos, além disso o espaço entre o obstáculo superior e inferir
+     * @param { number } addToPosX valor do primeiro cano na posição x, onde deve aparecer o seguinte (spawnner)
+     * @returns { any } retorna um objeto contendo posição e tamanho de um par de obstáculos
+     */
     GetPipeSizePosPair: function(addToPosX: number = 0): any {
         let yPosTop: number = - MinigameController.GetRandom(300, windowHeight - 100);
         const pipeTop: any = {
@@ -56,6 +77,10 @@ export const MinigameController = {
     
         return { pipeTop, pipeBottom };
     },
+    /**
+     * Restart, método que configura a física e reseta os objetos da cena quando chamado
+     * @returns { any } retorna a física e todos objetos necessários para inicalizar a partida
+     */
     Restart: function(): any {
         let engine: Engine = Engine.create();
         engine.enableSleeping = true;
@@ -76,6 +101,16 @@ export const MinigameController = {
             ObstacleBottom2:  GameObjectHelper.CreateGameObject(world, 'ObstacleBottom2', '#FF5A4D', pipeSizePosB.pipeBottom.pos, pipeSizePosB.pipeBottom.size, true)
         }
     },
+    /**
+     * StartGame, método que inicia a partida, salva o score anterior e reseta o estado de um cupom obtido
+     * @param { number } currentPoints valor atual da pontuação
+     * @param { CallableFunction } SetCurrentPoints método que atualiza o estado dos pontos atuais, por default reseta para zero
+     * @param { CallableFunction } SetIsRunning método que atualiza o estado da flag que indica se a engine está em execução ou não
+     * @param { CallableFunction } SetGettedCoupon método que atualiza o estado do cupom obtido, por padrão reseta para o estado inicial de "a encontrar"
+     * @param { CallableFunction } SetLoading método que atualiza o estado do componente Loader
+     * @param { CallableFunction } SetCouponIsCopied método que atualiza o estado da flag que indica quando o usuário copiou a hash do cupom encontrado no sorteio
+     * @param { CallableFunction } SetScore método que atualiza o estado do score demonstrado na tela
+     */
     StartGame: function(currentPoints: number, SetCurrentPoints: CallableFunction, SetIsRunning: CallableFunction, SetGettedCoupon: CallableFunction, SetLoading: CallableFunction, SetCouponIsCopied: CallableFunction, SetScore: CallableFunction): void {
         SetIsRunning(true);
         MinigameController.SaveScore(currentPoints, SetScore);
@@ -85,6 +120,11 @@ export const MinigameController = {
         SetLoading(false);
         SetCouponIsCopied(false);
     },
+    /**
+     * LoadScore, método que acessa o AsyncStorage e obtém o score registrado, serializa e atualiza o estado na tela do minigame
+     * @param { CallableFunction } SetScore método que atualiza o estado atual do score na tela
+     * @returns { Promise<void> } retorna uma promise para acessar o then() após executar a ação
+     */
     LoadScore: async function(SetScore: CallableFunction): Promise<void> {
         let data: string | null = await AsyncStorage.getItem("score");
         
@@ -95,6 +135,12 @@ export const MinigameController = {
             SetScore({ last: 0, best: 0 });
         }
     },
+    /**
+     * SaveScore, método que verifica o score da última partida e atualiza a melhor pontuação e a última pontuação no AsyncStorage e na tela
+     * @param { number } currentPoints pontuação da última partida
+     * @param { CallableFunction } SetScore método que atualiza o estado atual do score na tela
+     * @returns { Promise<void> } retorna uma promise para acessar o then() após executar a ação
+     */
     SaveScore: async function(currentPoints: number, SetScore: CallableFunction): Promise<void> {
         let data: string | null = await AsyncStorage.getItem("score");
 
@@ -112,6 +158,14 @@ export const MinigameController = {
             AsyncStorage.setItem("score", newScoreString);
         }
     },
+    /**
+     * SetGameState, método que monitora os eventos dentro da cena do minigame e, de acordo com o retorno executa uma determinada ação
+     * @param { any } e nome do evento detectado durante a partida
+     * @param { any } gameEngine engine que executa o mingame
+     * @param { CallableFunction } SetIsRunning método que atualiza o estado atual da flag que indica se a engine foi inicializada
+     * @param { CallableFunction } SetCurrentPoints método que atualiza o estado atual da última partida
+     * @param { number } currentPoints pontuação da última partida
+     */
     SetGameState: function(e: any, gameEngine: any, SetIsRunning: CallableFunction, SetCurrentPoints: CallableFunction, currentPoints: number): void {
         switch(e.type) {
             case 'game_over':
@@ -122,13 +176,6 @@ export const MinigameController = {
                 let points: number = currentPoints + 1;
                 SetCurrentPoints(points);
                 break;
-        }
-    },
-    SaveCoupon: function(gettedCoupon: any, couponIsCopied: boolean, SetCouponIsCopied: CallableFunction): void {
-        if(couponIsCopied == false) {
-            SetCouponIsCopied(true);
-            let couponString: string = JSON.stringify(gettedCoupon.coupon);
-            AsyncStorage.setItem("coupon", couponString);
         }
     }
 }
