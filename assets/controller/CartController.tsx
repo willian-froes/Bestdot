@@ -171,5 +171,3 @@ export const CartController: any = {
         await AsyncStorage.setItem("cart", newCartString);
     }
 }
-
-export default CartController;

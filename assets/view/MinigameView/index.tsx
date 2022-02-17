@@ -17,28 +17,35 @@ import { CouponController } from '../../controller/CouponController';
 import style from './style';
 
 interface Props {
+    /** Objeto que possibilita acesso ao navigate. */
     navigation: StackNavigationProp<any, any>
 }
 
 /**
  * View da tela do minigame, responsável por renderizar o minigame Flappy dot e sortear um cupom quando possível
- * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @param { Props } Props parâmetro que contém as propriedades que a view recebe
  * @returns { ReactElement } arvore de elementos que compõem a tela do minigame
  */
 const MinigameView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
+    /** Constante de estado da flag que indica se a game engine está sendo executada */
     const [isRunning, SetIsRunning] = useState<boolean>(false);
+    /** Constante de estado que contém a game engine */
     const [gameEngine, SetGameEngine] = useState<GameEngine | null>(null);
-
+    /** Constante de estado da pontuação atual */
     const [currentPoints, SetCurrentPoints] = useState<number>(0);
+    /** Constante de estado do score a ser visualizado */
     const [score, SetScore] = useState<any | null>({ last: 0, best: 0 });
+    /** Constante de estado do cupom e verificação para identificar se foi sorteado */
     const [gettedCoupon, SetGettedCoupon] = useState<any>({ coupon: null, state: 'to-find' });
-
+    /** Constante de estado da flag que indica se o loader está visível */
     const [loading, SetLoading] = useState<boolean>(false);
+    /** Constante de estado da flag que indica se um cupom sorteado foi copiado */
     const [couponIsCopied, SetCouponIsCopied] = useState<boolean>(false);
-
+    /** Constante de estado da flag que indica se o modal está visível */
     const [modalIsVisible, SetModalIsVisible] = useState<boolean>(true);
+    /** Constante de estado que contém a mensagem do modal */
     const [modalMessage, SetModalMessage] = useState<string>("To have a chance to win a coupon, you need to earn a minimum of 5 points.");
-
+    /** Constante que indica a pontuação mínima para sortear um cupom */
     const minimunPoints: number = 5;
 
     useEffect((): void => {
@@ -128,7 +135,7 @@ const MinigameView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
                                                 <View style={style.couponHashLabel}>
                                                     <Text style={style.couponHashText}>{gettedCoupon.coupon.hash}</Text>
                                                 </View>
-                                                <TouchableOpacity style={style.couponSaveButton} onPress={(): void => MinigameController.SaveCoupon(gettedCoupon, couponIsCopied, SetCouponIsCopied)}>
+                                                <TouchableOpacity style={style.couponSaveButton} onPress={(): void => CouponController.SaveCoupon(gettedCoupon, couponIsCopied, SetCouponIsCopied)}>
                                                     <Text style={[style.couponSaveButtonText, { color: couponIsCopied ? '#B5B5B5' : '#FF6E63' }]}>{couponIsCopied ? 'CODE SAVED!' : 'SAVE THIS CODE'}</Text>
                                                 </TouchableOpacity>
                                             </View>

@@ -19,48 +19,51 @@ import CartProduct from '../../model/CartProduct';
 import style from './style';
 
 interface Props {
+    /** Objeto que possibilita acesso ao navigate */
     navigation?: StackNavigationProp<any, any>
 }
 
 /**
  * View da tela principal, responsável por renderizar a lista de produtos e recursos de filtros, além do acesso ao minigame e banner de propaganda
- * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @param { Props } Props parâmetro que contém as propriedades que a view recebe
  * @returns { ReactElement } arvore de elementos que compõem a tela principal
  */
 const MainView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
+    /** Constante de estado da lista de produtos a venda */
     const [productsList, SetProductsList] = useState<Product[]>([]);
-
+    /** Constante de estado da lista de categorias */
     const [categoriesList, SetCategoriesList] = useState<string[]>([]);
+    /** Constante de estado da categoria selecionada, por padrão é "all" */
     const [selectedCategory, SetselectedCategory] = useState<string>("all");
-
+    /** Constante de estado da cópia da lista de produtos */
     const [searchableList, SetSearchableList] = useState<Product[]>([]);
+    /** Constante de estado do valor do campo de pesquisa */
     const [searchText, SetSearchText] = useState<string>("");
-
+    /** Constante de estado do carrinho de compras */
     const [cart, SetCart] = useState<CartProduct[]>([]);
+    /** Constante de estado do tamanho do carrinho de compras */
     const [cartCount, SetCartCount] = useState<number>(0);
-
+    /** Constante de estado da flag que indica se o loader está visível */
     const [isLoading, SetIsLoading] = useState<boolean>(false);
+    /** Constante de estado da flag que indica o estado do texto de boas vindas no componente Navbar */
     const [welcomeState, SetWelcomeState] = useState<boolean>(true);
-
-    // let screenInitialPosition: number = 50;
+    /** Constante que indica o valor no eixo y da posição da FlatList para ocular o texto de boas vindas da navbar */
+    let screenInitialPosition: number = 30;
 
     useFocusEffect(useCallback((): void => {
         SetIsLoading(true);
         ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
-        CartController.LoadCart().then((cart: CartProduct[]) => { 
-            SetCart(cart); 
-            SetCartCount(cart.length); 
-        });
+        // CartController.LoadCart().then((cart: CartProduct[]) => { 
+        //     SetCart(cart); 
+        //     SetCartCount(cart.length); 
+        // });
     }, []));
 
     return (
         <View style={style.container}>
             <StatusBar backgroundColor='#ffffff' barStyle="dark-content"  translucent={false} />
 
-            <Navbar welcomeState={welcomeState} title="" isMain={true} cartLength={cartCount} callableGoTo={(): void => {
-                CartController.SaveCart(cart);
-                navigation?.navigate("Order");
-            }}>
+            <Navbar welcomeState={welcomeState} title="" isMain={true} cartLength={cartCount} callableGoTo={(): void => { CartController.SaveCart(cart); navigation?.navigate("Order"); }}>
                 {productsList.length == 0 || categoriesList.length == 0
                     ?
                     <></>
@@ -82,8 +85,8 @@ const MainView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
                 :
                 <FlatList<Product>
                     onScroll={(event): void => {
-                        // const isInitialPosition: boolean = event.nativeEvent.contentOffset.y < screenInitialPosition;
-                        // SetWelcomeState(isInitialPosition);
+                        const isInitialPosition: boolean = event.nativeEvent.contentOffset.y < screenInitialPosition;
+                        SetWelcomeState(isInitialPosition);
                     }}
                     ListHeaderComponent={
                         <>

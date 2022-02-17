@@ -1,5 +1,5 @@
 import { ProductService } from "../service/ProductService";
-import CartController from "./CartController";
+import { CartController } from "./CartController";
 
 import CartProduct from "../model/CartProduct";
 import Product from "../model/Product";

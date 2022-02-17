@@ -14,6 +14,7 @@ import Line from '../../component/Line/Line';
 import OrderValueItem from '../../component/OrderValueItem';
 
 import { CartController } from '../../controller/CartController';
+import { CouponController } from '../../controller/CouponController';
 
 import CartItem from '../../model/CartItem';
 import Coupon from '../../model/Coupon';
@@ -21,26 +22,31 @@ import Coupon from '../../model/Coupon';
 import style from './style';
 
 interface Props {
+    /** Objeto que possibilita acesso ao navigate */
     navigation: StackNavigationProp<any, any>
 }
 
 /**
  * View da tela do carrinho/pedido, responsável por renderizar os items inclusos no carrinho de compras, também disponibiliza um resumo geral do pedido
- * @param { navigation } StackNavigationProp objeto que possibilita acesso ao navigate
+ * @param { Props } Props parâmetro que contém as propriedades que a view recebe
  * @returns { ReactElement } arvore de elementos que compõem a tela do carrinho/pedido
  */
 const OrderView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
+    /** Constante de estado do carrinho de compras com as informações completas de cada produto */
     const [detailedCart, SetDetailedCart] = useState<CartItem[]>([]);
-
+    /** Constante de estado do valor de campo de entrada da hash do cupom */
     const [couponText, SetCouponText] = useState<string>("");
+    /** Constante de estado do cupom retornado caso disponível */
     const [coupon, SetCoupon] = useState<Coupon | null>();
-
+    /** Constante de estado da contagem total de itens no carrinho */
     const [totalItems, SetTotalItems] = useState<any>(0);
+    /** Constante de estado da soma total de preços dos itens no carrinho */
     const [totalPrice, SetTotalPrice] = useState<any>(0);
-
+    /** Constante de estado da flag que indica se o modal está visível */
     const [modalIsVisible, SetModalIsVisible] = useState(false);
+    /** Constante de estado que contém a mensagem do modal */
     const [modalMessage, SetModalMessage] = useState("");
-
+    /** Constante de estado da flag que indica se o loader está visível */
     const [isLoading, SetIsLoading] = useState<boolean>(false);
 
     useEffect((): void => {
@@ -50,7 +56,7 @@ const OrderView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
             SetDetailedCart(detailedCart);
             CartController.UpdateTotalPrice(detailedCart, SetTotalPrice);
             CartController.UpdateTotalItems(detailedCart, SetTotalItems);
-            CartController.GetCachedCoupon(SetCouponText).then((coupon: Coupon): void => {
+            CouponController.GetCachedCoupon(SetCouponText).then((coupon: Coupon): void => {
                 SetIsLoading(false);
                 if(coupon) {
                     SetModalIsVisible(true);
@@ -113,7 +119,7 @@ const OrderView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
                                 ListHeaderComponent={
                                     <View style={style.couponInputContainer}>
                                         <InputWithButton 
-                                            callableMethod={async (): Promise<void> => CartController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
+                                            callableMethod={async (): Promise<void> => CouponController.CheckCouponToInsert(couponText, SetCoupon, SetModalIsVisible, SetModalMessage)}
                                             callableCancelMethod={(): void => SetCouponText("")}
                                             inputPlaceholder={"Have coupon? Insert here!"}
                                             buttonIcon={<MaterialIcons name="send" size={32} color="#ffffff" />}
