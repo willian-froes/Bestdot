@@ -29,7 +29,6 @@
   "devDependencies": {
     "@babel/core": "^7.17.4",
     "@babel/preset-typescript": "^7.16.7",
-    "@testing-library/react-native": "^9.0.0",
     "@types/matter-js": "^0.17.7",
     "@types/react": "~17.0.21",
     "@types/react-native": "^0.64.23",

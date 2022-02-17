@@ -163,11 +163,16 @@ export const CartController: any = {
      */
     UpdateCart: async function(detailedCart: CartItem[], item: CartItem): Promise<void> {
         let newCart: CartItem[] = detailedCart;
+        let itemCart: CartProduct[] = [];
         
         const index: number = newCart.map(product => product.id).indexOf(item.id);
         newCart.splice(index, 1);
 
-        let newCartString: string = JSON.stringify(newCart);
+        newCart.forEach((productItem) => {
+            itemCart.push({ productId: productItem.id, quantity: productItem.quantity });
+        })
+
+        let newCartString: string = JSON.stringify(itemCart);
         await AsyncStorage.setItem("cart", newCartString);
     }
 }

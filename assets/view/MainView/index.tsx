@@ -50,13 +50,14 @@ const MainView: React.FC<Props> = ({ navigation }: Props): ReactElement => {
     /** Constante que indica o valor no eixo y da posição da FlatList para ocular o texto de boas vindas da navbar */
     let screenInitialPosition: number = 30;
 
+    
     useFocusEffect(useCallback((): void => {
         SetIsLoading(true);
         ProductController.LoadProducts(SetProductsList, SetSearchableList, SetCategoriesList, SetIsLoading);
-        // CartController.LoadCart().then((cart: CartProduct[]) => { 
-        //     SetCart(cart); 
-        //     SetCartCount(cart.length); 
-        // });
+        CartController.LoadCart().then((cart: CartProduct[]) => { 
+            SetCart(cart); 
+            SetCartCount(cart.length); 
+        });
     }, []));
 
     return (
