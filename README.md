@@ -1,0 +1,1 @@
+Aplicativo mobile desenvolvido com React Native, Typescript e expo que simula um app ecommerce simplificado com um sistema gamificado básico de cupons contendo um minigame clone do Flappy Bird desenvolvido com react-native-game-engine e Matter.js
